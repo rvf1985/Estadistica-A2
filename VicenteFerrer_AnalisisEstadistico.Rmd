@@ -1,5 +1,3 @@
-
-
 ---
 title: 'Estadística Avanzada: A2 - Analítica descriptiva e inferencial'
 author: "Autor: Raúl Vicente Ferrer"
@@ -19,7 +17,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval=T, echo=T)
-
+Sys.setenv(LANG = "en")
+Sys.setlocale("LC_ALL", "en_US.UTF-8")
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -34,7 +33,10 @@ if (!require('nortest')) install.packages('nortest'); library('nortest')
 ******
 
 ```{r message= FALSE, warning=FALSE}
-claim <- read.csv("./train_clean2.csv", header=TRUE) 
+claim <- read.csv("./train_clean2.csv", header=TRUE, stringsAsFactors=TRUE) 
+```
+
+```{r message= FALSE, warning=FALSE}
 str(claim)
 summary(claim)
 ```
@@ -139,11 +141,9 @@ U <- mean(claim$UltCost) + t*SE
 c(L,U)
 ```
 
-
-
 * ¿Podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral del coste en escala original?
 
-El Teorema del Límite Central (TLC) establece que el contraste de hipótesis sobre la media de una muestra se aproxima a una distribución normal aunque la población original no siga una distribución normal, siempre que el tamaño de la muestra sea suficientemente grande, es decir, mayor de 30. Asi que en este caso, se cumple el TLC y por o tanto podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral.
+El Teorema del Límite Central (TLC) establece que el contraste de hipótesis sobre la media de una muestra se aproxima a una distribución normal aunque la población original no siga una distribución normal, siempre que el tamaño de la muestra sea suficientemente grande, es decir, mayor de 30. Así que, en este caso, se cumple el TLC y por o tanto podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral.
 
 * Interpretación del intervalo de confianza:
 
@@ -155,13 +155,15 @@ Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos 
 
 ## Justificación del test a aplicar
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas. Ya que queremos comparar dos muestras que están univocamente relacionadas.
 
 ## Hipótesis nula y alternativa
+
+$H_0: µ_d = 0$
+
+$H_1: µ_d \neq 0$
+
+IniCost-UltCost
 
 ```{r}
 

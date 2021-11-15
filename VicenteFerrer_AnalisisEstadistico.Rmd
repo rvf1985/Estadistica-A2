@@ -1,9 +1,9 @@
 
 
 ---
-title: 'Estadística Avanzada: A1 - Preproceso de datos'
+title: 'Estadística Avanzada: A2 - Analítica descriptiva e inferencial'
 author: "Autor: Raúl Vicente Ferrer"
-date: "Octubre 2021"
+date: "Noviembre 2021"
 output:
   html_document:
     highlight: default

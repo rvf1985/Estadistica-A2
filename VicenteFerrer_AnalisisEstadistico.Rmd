@@ -25,505 +25,385 @@ knitr::opts_chunk$set(eval=T, echo=T)
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # https://cran.r-project.org/web/packages/ggplot2/index.html
 if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
-# https://cran.r-project.org/web/packages/dplyr/index.html
-if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
-# https://cran.r-project.org/web/packages/VIM/index.html
-if (!require('VIM')) install.packages('VIM'); library('VIM')
-# https://cran.r-project.org/web/packages/Rcpp/index.html
-if (!require('Rcpp')) install.packages('Rcpp'); library('Rcpp')
-# https://cran.r-project.org/web/packages/psych/index.html
-if (!require('psych')) install.packages('psych'); library('psych')
-# https://cran.r-project.org/web/packages/knitr/index.html
-if (!require('knitr')) install.packages('knitr'); library('knitr')
+# https://cran.r-project.org/web/packages/nortest/index.html
+if (!require('nortest')) install.packages('nortest'); library('nortest')
 ```
 
 ******
-# Carga del archivo
+# Lectura del fichero y preparación de los datos
 ******
 
 ```{r message= FALSE, warning=FALSE}
-ds<-read.csv("./train3.csv", header=TRUE, sep=";") 
-str(ds)
-summary(ds)
+claim <- read.csv("./train_clean2.csv", header=TRUE) 
+str(claim)
+summary(claim)
 ```
 
 ******
-# Duplicación de códigos  
+# Coste de los siniestros  
 ******
 
-Primero se buscan los registros duplicados:
+## Análisis visual
+
+* Diagrama de caja de la distribución de la variable 'UltCost':
 
 ```{r}
-ds[duplicated(ds$ClaimNumber),]
+boxplot(claim$UltCost, main="UltCost")
 ```
 
-Seguidamente el máximo valor de ClaimNumber:
+* Transformación a escala logarítmica de la variable 'UltCost' y diagrama de caja:
 
 ```{r}
-max(ds$ClaimNumber)
+logUltCost <- log(claim$UltCost)
+boxplot(logUltCost, main="Log UltCost")
+```
+
+* Interpretación de los gráficos:
+El primer gráfico presenta una fuerte asimetría a la izquierda.
+Trás aplicar la transformación logarítmica, podemos ver que los valores se distribuyen entre 2 y 13.
+
+
+## Comprobación de normalidad
+
+* Inspección visual de la normalidad de la variable 'UltCost':
+
+Un gráfico Q-Q normal nos muestra como se aproximan estos datos a una distribución normal:
+
+```{r}
+qqnorm(claim$UltCost, main = "", xlab = "Cuantiles teóricos", ylab = "Cuantiles muestrales")
+qqline(claim$UltCost)
+```
+
+Se observa que no siguen una distribución normal.
+Esto es más fácil de visualizar con un histograma de densidad y una curva de distribución normal superpuesta:
+
+```{r}
+hist(claim$UltCost, probability = TRUE, main = "UltCost", xlab = "Población", ylab = "Densidad",  breaks=20)
+x   <- seq(min(claim$UltCost), max(claim$UltCost), length = 1000)
+y <- dnorm(x, mean(claim$UltCost), sd(claim$UltCost))
+lines(x, y, col = "blue")
+```
+
+* Contraste de normalidad de Lilliefors:
+
+```{r}
+lillie.test(claim$UltCost)
+```
+
+Como p-value es menor de 0.05 se rechaza la hipótesis de normalidad.
+
+* Inspección visual y contraste de la normalidad de la variable 'UltCost' en escala logarítmica:
+
+Un gráfico Q-Q normal nos muestra como se aproximan estos datos a una distribución normal:
+
+```{r}
+qqnorm(logUltCost, main = "", xlab = "Cuantiles teóricos", ylab = "Cuantiles muestrales")
+qqline(logUltCost)
+```
+
+Se observa que siguen una distribución normal.
+Esto es más fácil de visualizar con un histograma de densidad y una curva de distribución normal superpuesta:
+
+```{r}
+hist(logUltCost, probability = TRUE, main = "LogUltCost", xlab = "Población", ylab = "Densidad",  breaks=20)
+x   <- seq(min(logUltCost), max(logUltCost), length = 1000)
+y <- dnorm(x, mean(logUltCost), sd(logUltCost))
+lines(x, y, col = "red")
+```
+
+Contraste de normalidad de Lilliefors:
+
+```{r}
+lillie.test(logUltCost)
+```
+
+Como p-value es mayor de 0.05 se acepta la hipótesis de normalidad.
+
+## Intervalo de confianza de la media poblaciona de la variable 'UltCost'
+
+* Cálculo manual del intervalo de confianza al 95% de la media poblacional de la variable 'UltCost':
+
+Media:
+```{r}
+print(mean(claim$UltCost))
+```
+
+Intervalo de confianza:
+```{r}
+n <- nrow(claim)
+alpha <- (1-0.95)
+SE <- sd(claim$UltCost) / sqrt(n)
+t <- qnorm(alpha/2, lower.tail=FALSE)
+L <- mean(claim$UltCost) - t*SE
+U <- mean(claim$UltCost) + t*SE
+c(L,U)
+```
+
+
+
+* ¿Podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral del coste en escala original?
+
+El Teorema del Límite Central (TLC) establece que el contraste de hipótesis sobre la media de una muestra se aproxima a una distribución normal aunque la población original no siga una distribución normal, siempre que el tamaño de la muestra sea suficientemente grande, es decir, mayor de 30. Asi que en este caso, se cumple el TLC y por o tanto podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral.
+
+* Interpretación del intervalo de confianza:
+
+Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio del coste.
+
+******
+# Coste inicial y final de los siniestros  
+******
+
+## Justificación del test a aplicar
+
+```{r}
+
 ```
 
 Finalmente, se asignan los nuevos códigos:
 
+## Hipótesis nula y alternativa
+
 ```{r}
-ds$ClaimNumber[111] = "WC9999962"
-ds$ClaimNumber[40049] = "WC9999963"
-ds$ClaimNumber[50091] = "WC9999964"
-ds$ClaimNumber[50279] = "WC9999965"
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Cálculos
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Conclusión
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Comprobación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+******
+# Diferencia de salario según género  
+******
+
+## Análisis visual
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Interpretación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Hipótesis nula y alternativa
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Justificación del test a aplicar
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Cálculos
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Conclusión
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Comprobación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+******
+# Salario semanal (II)  
+******
+
+## Hipótesis nula y alternativa
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Justificación del test a aplicar
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Cálculos
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Conclusión
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Comprobación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+******
+# Diferencia de jornada según género 
+******
+
+## Análisis visual
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Interpretación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Hipótesis y alternativa
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Tipo de test
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Cálculos
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Conclusión
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Comprobación
+
+```{r}
+
 ```
 
 ******
-# Nombres de las variables  
+# Salario por hora 
 ******
 
+## Hipótesis nula y alternativa
+
 ```{r}
-colnames(ds)[14] <- "IniCost"
-colnames(ds)[15] <- "UltCost"
-colnames(ds)[11] <- "HoursWeek"
-colnames(ds)[12] <- "DaysWeek"
+
 ```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Tipo de test
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Cálculos
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Conclusión
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
+
+## Comprobación
+
+```{r}
+
+```
+
+Finalmente, se asignan los nuevos códigos:
 
 ******
-# Normalización de los datos cualitativos  
+# Resumen ejecutivo 
 ******
 
-## Marital Status
-
-Observamos un resumen de los valores de la variable:
-
-```{r}
-ds$MaritalStatus <- as.factor(ds$MaritalStatus)
-summary(ds$MaritalStatus)
-```
-
-Cambiamos:
-
-* m y married a M
-* w a W
-* d a D
-* los valores vacios a U
-  
-```{r}
-ds$MaritalStatus[ds$MaritalStatus == "m"] <- "M"
-ds$MaritalStatus[ds$MaritalStatus == "married"] <- "M"
-ds$MaritalStatus[ds$MaritalStatus == "w"] <- "W"
-ds$MaritalStatus[ds$MaritalStatus == "d"] <- "D"
-ds$MaritalStatus[ds$MaritalStatus == ""] <- "U"
-ds <- ds[, , drop=FALSE]; ds$MaritalStatus <- factor(ds$MaritalStatus); summary(ds$MaritalStatus)
-```
-
-## Género
-
-Observamos un resumen de los valores de la variable:
-
-```{r}
-ds$Gender <- as.factor(ds$Gender)
-summary(ds$Gender)
-```
-
-Cambiamos f y Fm a F:
-
-```{r}
-ds$Gender[ds$Gender == "f"] <- "F"
-ds$Gender[ds$Gender == "Fm"] <- "F"
-ds <- ds[, , drop=FALSE]; ds$Gender <- factor(ds$Gender); summary(ds$Gender)
-```
-
-******
-# Normalización de los datos cuantitativos  
-******
-
-## IniCost y UltCost
-
-* Para IniCost:
-
-```{r}
-class(ds$IniCost)
-```
-```{r}
-head(ds$IniCost, 30)
-```
-
-* Para UltCost:
-
-```{r}
-class(ds$UltCost)
-```
-```{r}
-head(ds$UltCost, 30)
-```
-
-Se observa que la columna es de tipo "character" y que hay valores que aparecen con la unidad K. solucionamos esto:
-
-```{r}
-ds$UltCost <- as.numeric(sub("K", "e3", ds$UltCost, fixed = TRUE))
-ds$UltCost <- round(ds$UltCost,0)
-head(ds$UltCost, 30)
-ds$UltCost <- as.integer(ds$UltCost)
-class(ds$UltCost)
-```
-
-## Edad
-
-```{r}
-class(ds$Age)
-```
-```{r}
-head(ds$Age, 30)
-```
-
-## WeeklyWages, HoursWeek, DaysWeek
-
-* Para WeeklyWages:
-
-```{r}
-class(ds$WeeklyWages)
-```
-```{r}
-head(ds$WeeklyWages, 30)
-```
-
-Cambiamos la coma decimal por punto y pasamos a numeric:
-
-```{r}
-ds$WeeklyWages <- sub(",", ".", ds$WeeklyWages, fixed = TRUE)
-ds$WeeklyWages <- as.numeric(ds$WeeklyWages)
-class(ds$WeeklyWages)
-head(ds$WeeklyWages, 30)
-```
-
-Gráfico de la distribución de los valores:
-
-```{r}
-ggplot(mapping= aes(x=ds$WeeklyWages)) + geom_density()
-```
-
-* Para HoursWeek:
-
-```{r}
-class(ds$HoursWeek)
-```
-```{r}
-head(ds$HoursWeek, 30)
-```
-
-Cambiamos la coma decimal por punto y pasamos a numeric:
-
-```{r}
-ds$HoursWeek <- sub(",", ".", ds$HoursWeek, fixed = TRUE)
-ds$HoursWeek <- as.numeric(ds$HoursWeek)
-class(ds$HoursWeek)
-head(ds$HoursWeek, 30)
-```
-
-Gráfico de la distribución de los valores:
-
-```{r}
-ggplot(mapping= aes(x=ds$HoursWeek)) + geom_density()
-```
-
-* Para DaysWeek:
-
-```{r}
-class(ds$DaysWeek)
-```
-```{r}
-head(ds$DaysWeek, 30)
-```
-
-Gráfico de la distribución de los valores:
-
-```{r}
-ggplot(mapping= aes(x=ds$DaysWeek)) + geom_density()
-```
-
-******
-# Valores atípicos  
-******
-
-* Age:
-
-```{r}
-boxplot(ds$Age)
-ggplot(mapping= aes(x=ds$Age))+ geom_density()
-```
-
-```{r}
-boxplot.stats(ds$Age)$out
-```
-
-Se observa un valor centinela, el 999. Procedemos a sustituirlo por NA:
-
-```{r}
-val.centinela <- 999
-ds$Age[ds$Age == val.centinela]<- NA
-sum(is.na(ds$Age))
-```
-
-* WeeklyWages:
-
-```{r}
-boxplot(ds$WeeklyWages)
-```
-
-Se observan valores muy altos. Procedemos a observarlos:
-
-```{r}
-x <- boxplot.stats(ds$WeeklyWages)$out
-idx <- which(ds$WeeklyWages %in% x)
-head(sort(ds$WeeklyWages[idx], decreasing = TRUE), 50)
-```
-
-No se trata de valores anómalos, por lo tanto se mantienen.
-
-* HoursWeek:
-
-```{r}
-boxplot(ds$HoursWeek)
-```
-
-Se observan valores muy altos. Procedemos a observarlos:
-
-```{r}
-x <- boxplot.stats(ds$HoursWeek)$out
-idx <- which(ds$HoursWeek %in% x)
-head(sort(ds$HoursWeek[idx], decreasing = TRUE), 50)
-```
-
-Y los sustituimos por NA: 
-
-```{r}
-ds[ds$HoursWeek %in% x, "HoursWeek"] = NA
-sum(is.na(ds$HoursWeek))
-```
-
-* DaysWeek:
-
-```{r}
-boxplot(ds$DaysWeek)
-```
-
-No se trata de valores anómalos, por lo tanto se mantienen.
-
-******
-# Imputación de valores  
-******
-
-* Age:
-
-Aplicamos imputación por la media aritmética y comprobamos si existen NA
-
-```{r}
-ds$Age[is.na(ds$Age)] <- mean(ds$Age, na.rm = TRUE)
-sum(is.na(ds$Age))
-```
-
-Ya no existen NA en esta variable.
-
-* WeeklyWages:
-
-Comprobamos si existen NA
-
-```{r}
-sum(is.na(ds$WeeklyWages))
-```
-
-No existen NA en esta variable.
-
-* HoursWeek:
-
-Comprobamos si existen NA
-
-```{r}
-sum(is.na(ds$HoursWeek))
-```
-
-Procedemos a su imputación usando KNN con distancia Gower y con los registros del mismo género:
-
-```{r}
-# separamos en dos datasets en función del género
-dsM <- ds[ds$Gender == "M", ]
-dsF <- ds[ds$Gender == "F", ]
-dsU <- ds[ds$Gender == "U", ]
-# aplicamos kNN
-dsM <- kNN(dsM, variable = c("HoursWeek"), k = 5, dist_var = c("Age", "WeeklyWages", "IniCost", "UltCost"))
-dsF <- kNN(dsF, variable = c("HoursWeek"), k = 5, dist_var = c("Age", "WeeklyWages", "IniCost", "UltCost"))
-dsM <- subset( dsM, select = -16 )
-dsF <- subset( dsF, select = -16 )
-# volvemos a unir el dataset
-ds <- rbind(dsM, dsF, dsU)
-sum(is.na(dsF$HoursWeek))
-```
-
-Ya no existen NA en esta variable.
-
-* IniCost:
-
-Comprobamos si existen NA
-
-```{r}
-sum(is.na(ds$IniCost))
-```
-
-No existen NA en esta variable.
-
-* UltCost:
-
-Comprobamos si existen NA
-
-```{r}
-sum(is.na(ds$UltCost))
-```
-
-No existen NA en esta variable.
-
-******
-# Preparación de los datos  
-******
-
-## Tiempo de abertura del expediente
-
-Transformamos las variables a tipo fecha:
-
-```{r}
-ds$DateTimeOfAccident <- as.Date(ds$DateTimeOfAccident)
-ds$DateReported <- as.Date(ds$DateReported)
-Time <- ds$DateReported-ds$DateTimeOfAccident
-head(Time, 50)
-class(Time)
-```
-
-Lo añadimos como nueva variable al dataset:
-
-```{r}
-ds <- cbind(ds, Time)
-summary(ds)
-```
-
-## Diferencia entre IniCost y UltCost
-
-Añadimos la variable DifCost al dataset:
-
-```{r}
-DifCost <- ds$IniCost-ds$UltCost
-ds <- cbind(ds, DifCost)
-summary(ds)
-```
-
-Lo visualizamos debidamente:
-
-```{r}
-plot(ds$DifCost)
-```
-
-******
-# Estudio descriptivo  
-******
-
-## Funciones de media robustas
-
-* Media Recortada:
-
-```{r}
-media.recortada <- function( x, perc=0.05){
-  # primero se ordena el vector
-  x <- sort(x)
-  # eliminación de los elementos definidos por perc
-  x <- x[-c(length(x)-trunc(perc*length(x))+1:length(x))]
-  x <- x[-c(1:trunc(perc*length(x)))]
-  # cálculo de la media de los elementos restantes
-  media_recortada = sum(x)/length(x)
-
-  return (media_recortada)
-}
-```
-
-Comprobamos que funciona correctamente:
-
-```{r}
-vector_media_recortada = c(1,23,45,3,4,2,65,11,12,23,11,7,14,16,21,17,18,17,25,23,21,24,34,45,67,35,12,2,23,45,44,23,45,12,34,23,78,54,78,436,25,12,9,3,7,1000,34)
-media.recortada(vector_media_recortada)
-mean(vector_media_recortada, trim = 0.05)
-```
-
-* Media Winsor:
-
-```{r}
-media.winsor <- function( x, perc=0.05){
-  # primero se ordena el vector
-  x <- sort(x)
-  # eliminamos los elementos definidos por perc y guardamos los valores max y min
-  x <- x[-c(length(x)-trunc(perc*length(x))+1:length(x))]
-  x <- x[-c(1:trunc(perc*length(x)))]
-  x_min = x[1]
-  x_max = x[length(x)]
-  # añadimos los x_min y x_max necesarios
-  aux = trunc(perc*length(x))
-  for (i in 1:aux) {
-    x <- c(x, x_min)
-  }
-   for (i in 1:aux) {
-    x <- c(x, x_max)
-  }
-  # cálculo de la media de los elementos restantes
-  media_winsor = sum(x)/length(x)
-
-  return (media_winsor)
-}
-```
-
-Comprobamos que funciona correctamente:
-
-```{r}
-vector_media_winsor = c(1,23,45,3,4,2,65,11,12,23,11,7,14,16,21,17,18,17,25,23,21,24,34,45,67,35,12,2,23,45,44,23,45,12,34,23,78,54,78,436,25,12,9,3,7,1000,34)
-media.winsor(vector_media_winsor)
-winsor.mean(vector_media_winsor, trim = 0.05)
-```
-
-## Estudio descriptivo de las variables cuantitativas
-
-```{r message=FALSE, warning=FALSE}
-res <- c(4,9,11,12,14,15)
-mean.n <- as.vector(sapply( ds[,res ],mean,na.rm=TRUE ) )
-std.n <- as.vector(sapply(ds[,res ],sd, na.rm=TRUE))
-median.n <- as.vector(sapply(ds[,res],median, na.rm=TRUE))
-mean.trim.0.05 <- as.vector(sapply(ds[,res],media.recortada))
-mean.winsor.0.05 <- as.vector(sapply(ds[,res],media.winsor))
-IQR.n <- as.vector(sapply(ds[,res],IQR, na.rm=TRUE))
-mad.n <- as.vector(sapply(ds[,res],mad, na.rm=TRUE))
-
-kable(data.frame(variables=names(ds)[res], Media=mean.n,
-                 Mediana=median.n,
-                 Media.recort.0.05=mean.trim.0.05, 
-                 Media.winsor.0.05=mean.winsor.0.05), 
-      digits=2, caption="Estimaciones de Tendencia Central")
-
-kable(data.frame(variables= names(ds)[res], 
-                 Desv.Standard = std.n,
-                 IQR = IQR.n,
-                 MAD = mad.n
-                 ),
-      digits=2, caption="Estimaciones de Dispersión")
-```
-
-Lo visualizamos debidamente:
-
-```{r}
-ggplot(mapping= aes(x=ds$Age))+ geom_density()
-ggplot(mapping= aes(x=ds$WeeklyWages))+ geom_density()
-ggplot(mapping= aes(x=ds$DaysWeek))+ geom_density()
-ggplot(mapping= aes(x=ds$HoursWeek))+ geom_density()
-ggplot(mapping= aes(x=ds$IniCost))+ geom_density()
-ggplot(mapping= aes(x=ds$UltCost))+ geom_density()
-```
-
-******
-# Archivo final  
-******
-
-```{r}
-write.csv(ds,"./train_clean.csv", row.names = FALSE)
-```
+finalmente, se asignan los nuevos códigos:
 
 ******
 # Bibliografía

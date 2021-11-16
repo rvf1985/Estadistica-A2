@@ -386,18 +386,24 @@ Se obtiene el mismo resultado.
 ## Análisis visual
 
 ```{r}
-
+claim2 <- claim[!(claim$Gender=="U"),]
+claim2$Gender <- as.factor(claim2$Gender)
+claim2$PartTimeFullTime <- as.factor(claim2$PartTimeFullTime)
+tab <- table(claim2$Gender, claim2$PartTimeFullTime)
+tab2 <- prop.table(tab, 2)
+barplot(tab2*100,
+        main = "Distribución del tipo de jornada según género",
+        ylab = "Frecuencias relativas (%)",
+        xlab = "PartTimeFullTime",
+        legend = T,
+        col = c("aquamarine3", "coral"),
+        beside = TRUE)
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Interpretación
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El número total de hombres que trabaja a tiempo completo es muy superior que número total de mujeres, y ocurre al revés para el tiempo parcial.
+Pero el número de registros masculinos es muy superior al de mujeres, así que lo que habría que estudiar es la proporción de cada grupo.
 
 ## Hipótesis y alternativa
 

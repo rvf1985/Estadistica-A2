@@ -209,7 +209,7 @@ testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alte
       Sb <- sqrt(sd1^2/n1 + sd2^2/n2)
       df <- ((sd1^2/n1 + sd2^2/n2)^2)/((sd1^2/n1)^2/(n1-1)+(sd2^2/n2)^2/(n2-1))
     }
-    t <- (mean1-mean2)/Sb
+    t <- abs((mean1-mean2)/Sb)
     #alternative=="two.sided"
     if (alternative=="two.sided"){
       tcritical <- qt(alpha/2, df, lower.tail=FALSE)
@@ -230,7 +230,7 @@ testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alte
   }
   #paired==TRUE
   else{
-    t <- meanD/(sD/sqrt(nD))
+    t <- abs(meanD/(sD/sqrt(nD)))
     #alternative=="two.sided"
     if (alternative=="two.sided"){
       tcritical <- qt(alpha/2, df=nD-1, lower.tail=FALSE)
@@ -253,8 +253,8 @@ testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alte
   return(result)
 }
 
-result<-testhipotesis(claim$UltCost, claim$IniCost, paired=TRUE, var.equal=FALSE, alternative = "two.sided")
-result
+result3<-testhipotesis(claim$UltCost, claim$IniCost, paired=TRUE, var.equal=FALSE, alternative = "two.sided")
+result3
 ```
 
 ## Conclusión
@@ -288,43 +288,46 @@ Se observan pequeñas diferencias entre sueldos, el límite inferior de los suel
 
 ## Hipótesis nula y alternativa
 
-```{r}
+$H_0: H = M$
 
-```
-
-Finalmente, se asignan los nuevos códigos:
+$H_1: H > M $
 
 ## Justificación del test a aplicar
 
-```{r}
+Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.
 
+Como no se conoce la varianza de la población aplicamos la distribución t, 
+
+Comprobamos igualdad de varianzas:
+
+```{r}
+var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)
 ```
 
-Finalmente, se asignan los nuevos códigos:
+p<0.001, por lo que descartamos igualdad de varianzas.
+
+Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.
 
 ## Cálculos
 
-```{r}
-
+```{r warning=FALSE}
+result4<-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
+result4
 ```
 
 Finalmente, se asignan los nuevos códigos:
 
 ## Conclusión
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El valor crítico para un nivel de confianza del 95% es 1.644922	 y el valor observado es 28.8127. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre los salarios de hombres y mujeres. Se concluye lo mismo con el valor p, que da un valor de 1.437086 × 10^−179^, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana. 
 
 ## Comprobación
 
 ```{r}
-
+t.test(Hombres$WeeklyWages, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = "greater")
 ```
 
-Finalmente, se asignan los nuevos códigos:
+Se obtiene el mismo resultado.
 
 ******
 # Salario semanal (II)  

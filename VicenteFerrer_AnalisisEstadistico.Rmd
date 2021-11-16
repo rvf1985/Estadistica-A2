@@ -184,59 +184,87 @@ $H_1: µ_d \neq 0$
 ## Cálculos
 
 ```{r}
-testhipotesis <- function (m1, m2, NConf=0.95, var.equal=TRUE, alternative="two.sided") {
+testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alternative="two.sided") {
+  alpha <- (1-NConf)
   mean1 <- mean(m1)
   n1 <- length(m1)
   sd1 <- sd(m1)
   mean2 <- mean(m2)
   n2 <- length(m2)
   sd2 <- sd(m2)
-  #var.equal==TRUE
-  if (var.equal==TRUE){
-    s <- sqrt(((n1-1)*sd1^2+(n2-1)*sd2^2)/(n1+n2-2))
-    Sb <- s*sqrt(1/n1 + 1/n2)
-    df <- n1+n2-2
+  diff <- m1-m2
+  nD <- length(diff)
+  meanD <- mean(diff)
+  sD <- sd(diff)
+  #paired==FALSE
+  if (paired==FALSE){
+    #var.equal==TRUE
+    if (var.equal==TRUE){
+      s <- sqrt(((n1-1)*sd1^2+(n2-1)*sd2^2)/(n1+n2-2))
+      Sb <- s*sqrt(1/n1 + 1/n2)
+      df <- n1+n2-2
+    }
+    #var.equal==FALSE
+    else{
+      Sb <- sqrt(sd1^2/n1 + sd2^2/n2)
+      df <- ((sd1^2/n1 + sd2^2/n2)^2)/((sd1^2/n1)^2/(n1-1)+(sd2^2/n2)^2/(n2-1))
+    }
+    t <- (mean1-mean2)/Sb
+    #alternative=="two.sided"
+    if (alternative=="two.sided"){
+      tcritical <- qt(alpha/2, df, lower.tail=FALSE)
+      pvalue <- pt(abs(t), df, lower.tail=FALSE )*2
+    }
+    #alternative=="menor"
+    else if (alternative=="menor"){
+      tcritical <- qt(alpha, df, lower.tail=TRUE)
+      pvalue <- pt(t, df, lower.tail=TRUE)
+    }
+    #alternative=="mayor"
+    else{
+      tcritical <- qt(alpha, df, lower.tail=FALSE)
+      pvalue <- pt(t, df, lower.tail=FALSE)
+    }
+    result <- data.frame(t, tcritical, pvalue)
+    result %>% kable() %>% kable_styling()
   }
-  #var.equal==FALSE
+  #paired==TRUE
   else{
-    Sb <- sqrt(sd1^2/n1 + sd2^2/n2)
-    denom <- ((sd1^2/n1)^2/(n1-1)+(sd2^2/n2)^2/(n2-1))
-    df <- ((sd1^2/n1 + sd2^2/n2)^2)/denom
+    t <- meanD/(sD/sqrt(nD))
+    #alternative=="two.sided"
+    if (alternative=="two.sided"){
+      tcritical <- qt(alpha/2, df=nD-1, lower.tail=FALSE)
+      pvalue <- pt(abs(t), df=nD-1, lower.tail=FALSE)*2
+    }
+    #alternative=="menor"
+    else if (alternative=="menor"){
+      tcritical <- qt(alpha, df=nD-1, lower.tail=TRUE)
+      pvalue <- pt(abs(t), df=nD-1, lower.tail=TRUE)
+    }
+    #alternative=="mayor"
+    else{
+      tcritical <- qt(alpha, df=nD-1, lower.tail=FALSE)
+      pvalue <- pt(abs(t), df=nD-1, lower.tail=FALSE)
+    }
+    result <- data.frame(t, tcritical, pvalue)
+    result %>% kable() %>% kable_styling()
+  
   }
-  alpha <- (1-NConf)
-  t <- (mean1-mean2)/Sb
-  #alternative=="bilateral"
-  if (alternative=="two.sided"){
-    tcritical <- qt(alpha/2, df, lower.tail=FALSE)
-    pvalue <- pt(abs(t), df, lower.tail=FALSE )*2
-  }
-  #alternative=="menor"
-  else if (alternative=="menor"){
-    tcritical <- qt( alpha, df, lower.tail=TRUE )
-    pvalue <- pt( t, df, lower.tail=TRUE )
-  }
-  #alternative=="mayor"
-  else{
-    tcritical <- qt( alpha, df, lower.tail=FALSE )
-    pvalue <- pt( t, df, lower.tail=FALSE )
-  }
-  result <- data.frame(t, tcritical, pvalue)
-  result %>% kable() %>% kable_styling()
   return(result)
 }
 
-result<-testhipotesis(claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = "two.sided")
+result<-testhipotesis(claim$UltCost, claim$IniCost, paired=TRUE, var.equal=FALSE, alternative = "two.sided")
 result
 ```
 
 ## Conclusión
 
-El valor crítico para un nivel de confianza del 95% es 1.959988 y el valor observado es 15.34648. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 4.306053 × 10^−53^, muy inferior a alpha=0.05.
+El valor crítico para un nivel de confianza del 95% es 1.960011	 y el valor observado es 20.80108. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 1.067535 × 10^−95^, muy inferior a alpha=0.05.
 
 ## Comprobación
 
 ```{r}
-t.test( claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = "two.sided")
+t.test(claim$UltCost, claim$IniCost, var.equal=FALSE, paired=TRUE, alternative = "two.sided")
 ```
 
 Los valores coinciden.
@@ -248,18 +276,15 @@ Los valores coinciden.
 ## Análisis visual
 
 ```{r}
+Mujeres <- claim[claim$Gender=="F",]
+Hombres <- claim[claim$Gender=="M",]
 
+boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c("Mujeres","Hombres"), main="Sueldo" )
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Interpretación
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+Se observan pequeñas diferencias entre sueldos, el límite inferior de los sueldos es menor en mujeres, pero el superior parece ser superior. Es necesario recurrir a un contraste de hipótesis para confirmar si estas diferencias observadas son significativas.
 
 ## Hipótesis nula y alternativa
 

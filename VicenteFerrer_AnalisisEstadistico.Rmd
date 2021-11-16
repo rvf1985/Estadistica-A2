@@ -24,6 +24,12 @@ Sys.setlocale("LC_ALL", "en_US.UTF-8")
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # https://cran.r-project.org/web/packages/ggplot2/index.html
 if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require('knitr')) install.packages('knitr'); library('knitr')
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require('kableExtra')) install.packages('kableExtra'); library('kableExtra')
 # https://cran.r-project.org/web/packages/nortest/index.html
 if (!require('nortest')) install.packages('nortest'); library('nortest')
 ```
@@ -33,7 +39,7 @@ if (!require('nortest')) install.packages('nortest'); library('nortest')
 ******
 
 ```{r message= FALSE, warning=FALSE}
-claim <- read.csv("./train_clean2.csv", header=TRUE, stringsAsFactors=TRUE) 
+claim <- read.csv("./train_clean2.csv", header=TRUE) 
 ```
 
 ```{r message= FALSE, warning=FALSE}
@@ -155,7 +161,19 @@ Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos 
 
 ## Justificación del test a aplicar
 
-Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas. Ya que queremos comparar dos muestras que están univocamente relacionadas.
+Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.
+
+Como no se conoce la varianza de la población aplicamos la distribución t, 
+
+Comprobamos igualdad de varianzas:
+
+```{r}
+var.test( claim$IniCost, claim$UltCost )
+```
+
+p<0.001, por lo que descartamos igualdad de varianzas.
+
+Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas y bilateral.Ya que queremos comparar dos muestras que están univocamente relacionadas.
 
 ## Hipótesis nula y alternativa
 
@@ -163,37 +181,65 @@ $H_0: µ_d = 0$
 
 $H_1: µ_d \neq 0$
 
-IniCost-UltCost
-
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
-
 ## Cálculos
 
 ```{r}
+testhipotesis <- function (m1, m2, NConf=0.95, var.equal=TRUE, alternative="two.sided") {
+  mean1 <- mean(m1)
+  n1 <- length(m1)
+  sd1 <- sd(m1)
+  mean2 <- mean(m2)
+  n2 <- length(m2)
+  sd2 <- sd(m2)
+  #var.equal==TRUE
+  if (var.equal==TRUE){
+    s <- sqrt(((n1-1)*sd1^2+(n2-1)*sd2^2)/(n1+n2-2))
+    Sb <- s*sqrt(1/n1 + 1/n2)
+    df <- n1+n2-2
+  }
+  #var.equal==FALSE
+  else{
+    Sb <- sqrt(sd1^2/n1 + sd2^2/n2)
+    denom <- ((sd1^2/n1)^2/(n1-1)+(sd2^2/n2)^2/(n2-1))
+    df <- ((sd1^2/n1 + sd2^2/n2)^2)/denom
+  }
+  alpha <- (1-NConf)
+  t <- (mean1-mean2)/Sb
+  #alternative=="bilateral"
+  if (alternative=="two.sided"){
+    tcritical <- qt(alpha/2, df, lower.tail=FALSE)
+    pvalue <- pt(abs(t), df, lower.tail=FALSE )*2
+  }
+  #alternative=="menor"
+  else if (alternative=="menor"){
+    tcritical <- qt( alpha, df, lower.tail=TRUE )
+    pvalue <- pt( t, df, lower.tail=TRUE )
+  }
+  #alternative=="mayor"
+  else{
+    tcritical <- qt( alpha, df, lower.tail=FALSE )
+    pvalue <- pt( t, df, lower.tail=FALSE )
+  }
+  result <- data.frame(t, tcritical, pvalue)
+  result %>% kable() %>% kable_styling()
+  return(result)
+}
 
+result<-testhipotesis(claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = "two.sided")
+result
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Conclusión
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El valor crítico para un nivel de confianza del 95% es 1.959988 y el valor observado es 15.34648. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 4.306053 × 10^−53^, muy inferior a alpha=0.05.
 
 ## Comprobación
 
 ```{r}
-
+t.test( claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = "two.sided")
 ```
 
-Finalmente, se asignan los nuevos códigos:
+Los valores coinciden.
 
 ******
 # Diferencia de salario según género  

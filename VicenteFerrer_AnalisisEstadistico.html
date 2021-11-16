@@ -230,14 +230,20 @@ pre code {
 
 <pre class="r"><code># https://cran.r-project.org/web/packages/ggplot2/index.html
 if (!require(&#39;ggplot2&#39;)) install.packages(&#39;ggplot2&#39;); library(&#39;ggplot2&#39;)
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require(&#39;dplyr&#39;)) install.packages(&#39;dplyr&#39;); library(&#39;dplyr&#39;)
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require(&#39;knitr&#39;)) install.packages(&#39;knitr&#39;); library(&#39;knitr&#39;)
+# https://cran.r-project.org/web/packages/dplyr/index.html
+if (!require(&#39;kableExtra&#39;)) install.packages(&#39;kableExtra&#39;); library(&#39;kableExtra&#39;)
 # https://cran.r-project.org/web/packages/nortest/index.html
 if (!require(&#39;nortest&#39;)) install.packages(&#39;nortest&#39;); library(&#39;nortest&#39;)</code></pre>
 <hr />
 <div id="lectura-del-fichero-y-preparación-de-los-datos" class="section level1" number="1">
 <h1 number="1"><span class="header-section-number">1</span> Lectura del fichero y preparación de los datos</h1>
 <hr />
-<pre class="r"><code>claim &lt;- read.csv(&quot;./train_clean2.csv&quot;, header=TRUE) 
-str(claim)</code></pre>
+<pre class="r"><code>claim &lt;- read.csv(&quot;./train_clean2.csv&quot;, header=TRUE) </code></pre>
+<pre class="r"><code>str(claim)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    50526 obs. of  17 variables:
 ##  $ X                 : int  1 2 3 4 5 6 7 9 10 11 ...
 ##  $ ClaimNumber       : chr  &quot;WC8285054&quot; &quot;WC6982224&quot; &quot;WC5481426&quot; &quot;WC9775968&quot; ...
@@ -381,7 +387,7 @@ c(L,U)</code></pre>
 <ul>
 <li>¿Podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral del coste en escala original?</li>
 </ul>
-<p>El Teorema del Límite Central (TLC) establece que el contraste de hipótesis sobre la media de una muestra se aproxima a una distribución normal aunque la población original no siga una distribución normal, siempre que el tamaño de la muestra sea suficientemente grande, es decir, mayor de 30. Asi que en este caso, se cumple el TLC y por o tanto podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral.</p>
+<p>El Teorema del Límite Central (TLC) establece que el contraste de hipótesis sobre la media de una muestra se aproxima a una distribución normal aunque la población original no siga una distribución normal, siempre que el tamaño de la muestra sea suficientemente grande, es decir, mayor de 30. Así que, en este caso, se cumple el TLC y por o tanto podemos asumir la hipótesis de normalidad para el cálculo del intervalo de confianza sobre la media muestral.</p>
 <ul>
 <li>Interpretación del intervalo de confianza:</li>
 </ul>
@@ -394,23 +400,96 @@ c(L,U)</code></pre>
 <hr />
 <div id="justificación-del-test-a-aplicar" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
+<p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
+<p>Comprobamos igualdad de varianzas:</p>
+<pre class="r"><code>var.test( claim$IniCost, claim$UltCost )</code></pre>
+<pre><code>## 
+##  F test to compare two variances
+## 
+## data:  claim$IniCost and claim$UltCost
+## F = 0.74436, num df = 50525, denom df = 50525, p-value &lt; 2.2e-16
+## alternative hypothesis: true ratio of variances is not equal to 1
+## 95 percent confidence interval:
+##  0.7314878 0.7574513
+## sample estimates:
+## ratio of variances 
+##          0.7443563</code></pre>
+<p>p&lt;0.001, por lo que descartamos igualdad de varianzas.</p>
+<p>Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas y bilateral.Ya que queremos comparar dos muestras que están univocamente relacionadas.</p>
 </div>
 <div id="hipótesis-nula-y-alternativa" class="section level2" number="3.2">
 <h2 number="3.2"><span class="header-section-number">3.2</span> Hipótesis nula y alternativa</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<p><span class="math inline">\(H_0: µ_d = 0\)</span></p>
+<p><span class="math inline">\(H_1: µ_d \neq 0\)</span></p>
 </div>
 <div id="cálculos" class="section level2" number="3.3">
 <h2 number="3.3"><span class="header-section-number">3.3</span> Cálculos</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<pre class="r"><code>testhipotesis &lt;- function (m1, m2, NConf=0.95, var.equal=TRUE, alternative=&quot;two.sided&quot;) {
+  mean1 &lt;- mean(m1)
+  n1 &lt;- length(m1)
+  sd1 &lt;- sd(m1)
+  mean2 &lt;- mean(m2)
+  n2 &lt;- length(m2)
+  sd2 &lt;- sd(m2)
+  #var.equal==TRUE
+  if (var.equal==TRUE){
+    s &lt;- sqrt(((n1-1)*sd1^2+(n2-1)*sd2^2)/(n1+n2-2))
+    Sb &lt;- s*sqrt(1/n1 + 1/n2)
+    df &lt;- n1+n2-2
+  }
+  #var.equal==FALSE
+  else{
+    Sb &lt;- sqrt(sd1^2/n1 + sd2^2/n2)
+    denom &lt;- ((sd1^2/n1)^2/(n1-1)+(sd2^2/n2)^2/(n2-1))
+    df &lt;- ((sd1^2/n1 + sd2^2/n2)^2)/denom
+  }
+  alpha &lt;- (1-NConf)
+  t &lt;- (mean1-mean2)/Sb
+  #alternative==&quot;bilateral&quot;
+  if (alternative==&quot;two.sided&quot;){
+    tcritical &lt;- qt(alpha/2, df, lower.tail=FALSE)
+    pvalue &lt;- pt(abs(t), df, lower.tail=FALSE )*2
+  }
+  #alternative==&quot;menor&quot;
+  else if (alternative==&quot;menor&quot;){
+    tcritical &lt;- qt( alpha, df, lower.tail=TRUE )
+    pvalue &lt;- pt( t, df, lower.tail=TRUE )
+  }
+  #alternative==&quot;mayor&quot;
+  else{
+    tcritical &lt;- qt( alpha, df, lower.tail=FALSE )
+    pvalue &lt;- pt( t, df, lower.tail=FALSE )
+  }
+  result &lt;- data.frame(t, tcritical, pvalue)
+  result %&gt;% kable() %&gt;% kable_styling()
+  return(result)
+}
+
+result&lt;-testhipotesis(claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = &quot;two.sided&quot;)
+result</code></pre>
+<pre><code>##          t tcritical       pvalue
+## 1 15.34648  1.959988 4.306053e-53</code></pre>
 </div>
 <div id="conclusión" class="section level2" number="3.4">
 <h2 number="3.4"><span class="header-section-number">3.4</span> Conclusión</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<p>El valor crítico para un nivel de confianza del 95% es 1.959988 y el valor observado es 15.34648. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 4.306053 × 10<sup>−53</sup>, muy inferior a alpha=0.05.</p>
 </div>
 <div id="comprobación" class="section level2" number="3.5">
 <h2 number="3.5"><span class="header-section-number">3.5</span> Comprobación</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<pre class="r"><code>t.test( claim$UltCost, claim$IniCost, var.equal=FALSE, alternative = &quot;two.sided&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  claim$UltCost and claim$IniCost
+## t = 15.346, df = 98925, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  1883.569 2435.136
+## sample estimates:
+## mean of x mean of y 
+## 10147.667  7988.315</code></pre>
+<p>Los valores coinciden.</p>
 <hr />
 </div>
 </div>

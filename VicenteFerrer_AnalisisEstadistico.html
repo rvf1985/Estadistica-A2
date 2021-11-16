@@ -240,7 +240,7 @@ if (!require(&#39;kableExtra&#39;)) install.packages(&#39;kableExtra&#39;); libr
 if (!require(&#39;nortest&#39;)) install.packages(&#39;nortest&#39;); library(&#39;nortest&#39;)</code></pre>
 <hr />
 <div id="lectura-del-fichero-y-preparación-de-los-datos" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Lectura del fichero y preparación de los datos</h1>
+<h1><span class="header-section-number">1</span> Lectura del fichero y preparación de los datos</h1>
 <hr />
 <pre class="r"><code>claim &lt;- read.csv(&quot;./train_clean2.csv&quot;, header=TRUE) </code></pre>
 <pre class="r"><code>str(claim)</code></pre>
@@ -301,10 +301,10 @@ if (!require(&#39;nortest&#39;)) install.packages(&#39;nortest&#39;); library(&#
 <hr />
 </div>
 <div id="coste-de-los-siniestros" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Coste de los siniestros</h1>
+<h1><span class="header-section-number">2</span> Coste de los siniestros</h1>
 <hr />
 <div id="análisis-visual" class="section level2" number="2.1">
-<h2 number="2.1"><span class="header-section-number">2.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">2.1</span> Análisis visual</h2>
 <ul>
 <li>Diagrama de caja de la distribución de la variable ‘UltCost’:</li>
 </ul>
@@ -321,7 +321,7 @@ boxplot(logUltCost, main=&quot;Log UltCost&quot;)</code></pre>
 </ul>
 </div>
 <div id="comprobación-de-normalidad" class="section level2" number="2.2">
-<h2 number="2.2"><span class="header-section-number">2.2</span> Comprobación de normalidad</h2>
+<h2><span class="header-section-number">2.2</span> Comprobación de normalidad</h2>
 <ul>
 <li>Inspección visual de la normalidad de la variable ‘UltCost’:</li>
 </ul>
@@ -368,7 +368,7 @@ lines(x, y, col = &quot;red&quot;)</code></pre>
 <p>Como p-value es mayor de 0.05 se acepta la hipótesis de normalidad.</p>
 </div>
 <div id="intervalo-de-confianza-de-la-media-poblaciona-de-la-variable-ultcost" class="section level2" number="2.3">
-<h2 number="2.3"><span class="header-section-number">2.3</span> Intervalo de confianza de la media poblaciona de la variable ‘UltCost’</h2>
+<h2><span class="header-section-number">2.3</span> Intervalo de confianza de la media poblaciona de la variable ‘UltCost’</h2>
 <ul>
 <li>Cálculo manual del intervalo de confianza al 95% de la media poblacional de la variable ‘UltCost’:</li>
 </ul>
@@ -396,10 +396,10 @@ c(L,U)</code></pre>
 </div>
 </div>
 <div id="coste-inicial-y-final-de-los-siniestros" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Coste inicial y final de los siniestros</h1>
+<h1><span class="header-section-number">3</span> Coste inicial y final de los siniestros</h1>
 <hr />
 <div id="justificación-del-test-a-aplicar" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
+<h2><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
@@ -419,12 +419,12 @@ c(L,U)</code></pre>
 <p>Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas y bilateral.Ya que queremos comparar dos muestras que están univocamente relacionadas.</p>
 </div>
 <div id="hipótesis-nula-y-alternativa" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">3.2</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_d = 0\)</span></p>
 <p><span class="math inline">\(H_1: µ_d \neq 0\)</span></p>
 </div>
 <div id="cálculos" class="section level2" number="3.3">
-<h2 number="3.3"><span class="header-section-number">3.3</span> Cálculos</h2>
+<h2><span class="header-section-number">3.3</span> Cálculos</h2>
 <pre class="r"><code>testhipotesis &lt;- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alternative=&quot;two.sided&quot;) {
   alpha &lt;- (1-NConf)
   mean1 &lt;- mean(m1)
@@ -500,11 +500,11 @@ result3</code></pre>
 ## 1 20.80108  1.960011 1.067535e-95</code></pre>
 </div>
 <div id="conclusión" class="section level2" number="3.4">
-<h2 number="3.4"><span class="header-section-number">3.4</span> Conclusión</h2>
+<h2><span class="header-section-number">3.4</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.960011 y el valor observado es 20.80108. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 1.067535 × 10<sup>−95</sup>, muy inferior a alpha=0.05.</p>
 </div>
 <div id="comprobación" class="section level2" number="3.5">
-<h2 number="3.5"><span class="header-section-number">3.5</span> Comprobación</h2>
+<h2><span class="header-section-number">3.5</span> Comprobación</h2>
 <pre class="r"><code>t.test(claim$UltCost, claim$IniCost, var.equal=FALSE, paired=TRUE, alternative = &quot;two.sided&quot;)</code></pre>
 <pre><code>## 
 ##  Paired t-test
@@ -522,10 +522,10 @@ result3</code></pre>
 </div>
 </div>
 <div id="diferencia-de-salario-según-género" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Diferencia de salario según género</h1>
+<h1><span class="header-section-number">4</span> Diferencia de salario según género</h1>
 <hr />
 <div id="análisis-visual-1" class="section level2" number="4.1">
-<h2 number="4.1"><span class="header-section-number">4.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">4.1</span> Análisis visual</h2>
 <pre class="r"><code>Mujeres &lt;- claim[claim$Gender==&quot;F&quot;,]
 Hombres &lt;- claim[claim$Gender==&quot;M&quot;,]
 
@@ -533,16 +533,16 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 <p><img src="data:image/png;base64,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CdQPLP/K6faRS1877bS5e7spezYe0Hqm15O+/qgp4WpGmxuEtx81HzQB3T6lYz/4SAT0sCwDut2pmzP4awN6un1881dPt6eDl752tjkm4bCMB/SsfVnaalKbgK7Kt/nXcvlRs7u0sd3sAPaD3RPQw7I6e1+fwy/P4K8LaPf1SOtD19POIht8bfnCpqPP/+6s7cCMPwd62j5DuZq/dSwvRj5a7xXr7z6+sB98DAJ6WFbpXIdweQafENCu3jHp6NfWlxncv3JQRgPamfP1pF8d0OP27zYf2g92T0APyyqg63P40+UyuCagneurlwI68rXl5YjOVQoOw/sCun2CcvvPZVpA7Qcfh4AelvXJ+/KPd/eX+//1AR1eRu0unJFLrC+eWDkHZ6dHoPaDnRHQw3K2vaevuQF0uddffwo/vIx6Ori8cNmfPz6p3L9ySK59DnT1vGbmc6D2g10T0MOyuQX0tN7jT1dL6nx7S+AmoGdVJ6B1WIe3Qm//5qWvdc4J37uo2IfxgI5dhb8ioJsJXXfXfrB7AnpYNgGtF9B/rM7gOwFdL6a397sBbb7l1vPtd6+OWzqp7X+tvbPFwjko4wEduw/0ioCud5DzanMfqP1g1wT0sGwCurxuur1P+t76S9WXr1cvJhm+Euno2/qDP59dWjiXvtbcvvJlc9315YP+O9+zX+95KWf3lUjryb4qoNUXf7SvWrIffAQCeli2r+JsfxXS5ZdF/8f9bkBX9/R1rwf0b5sefm3LgccBSX8t/BUB3b4WfvOeCPaDXRPQw7IN6Pn2PXW2b8xzvr7x5N67fkC3X9j8xc7CufS1xfYNKG4/veBgpL8b01VX4df3K23flct+sGsCeljOLr94pH1ryD+fnTTv6HgxDGh91tZ7b8fuwhl+rT5pe9KspfaNITkE174f6Oqz625janrbeT9Q+8GuCeh8+aVysGcCOl/jt0cDH42AzteZ66ewXwI6U6vLs16EB/skoDO1vN7qBhTYKwGdqea2lH/zlriwVwIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQf8fWHBHtKfzy/kAAAAASUVORK5CYII=" width="672" /></p>
 </div>
 <div id="interpretación" class="section level2" number="4.2">
-<h2 number="4.2"><span class="header-section-number">4.2</span> Interpretación</h2>
+<h2><span class="header-section-number">4.2</span> Interpretación</h2>
 <p>Se observan pequeñas diferencias entre sueldos, el límite inferior de los sueldos es menor en mujeres, pero el superior parece ser superior. Es necesario recurrir a un contraste de hipótesis para confirmar si estas diferencias observadas son significativas.</p>
 </div>
 <div id="hipótesis-nula-y-alternativa-1" class="section level2" number="4.3">
-<h2 number="4.3"><span class="header-section-number">4.3</span> Hipótesis nula y alternativa</h2>
-<p><span class="math inline">\(H_0: H = M\)</span></p>
-<p>$H_1: H &gt; M $</p>
+<h2><span class="header-section-number">4.3</span> Hipótesis nula y alternativa</h2>
+<p><span class="math inline">\(H_0: µ_H = µ_M\)</span></p>
+<p><span class="math inline">\(H_1: µ_H &gt; µ_M\)</span></p>
 </div>
 <div id="justificación-del-test-a-aplicar-1" class="section level2" number="4.4">
-<h2 number="4.4"><span class="header-section-number">4.4</span> Justificación del test a aplicar</h2>
+<h2><span class="header-section-number">4.4</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
@@ -562,7 +562,8 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 <p>Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.</p>
 </div>
 <div id="cálculos-1" class="section level2" number="4.5">
-<h2 number="4.5"><span class="header-section-number">4.5</span> Cálculos</h2>
+<h2><span class="header-section-number">4.5</span> Cálculos</h2>
+<p>Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también. El resultado que arroja es:</p>
 <pre class="r"><code>result4&lt;-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
 result4</code></pre>
 <pre><code>##         t tcritical        pvalue
@@ -570,11 +571,11 @@ result4</code></pre>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="conclusión-1" class="section level2" number="4.6">
-<h2 number="4.6"><span class="header-section-number">4.6</span> Conclusión</h2>
+<h2><span class="header-section-number">4.6</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.644922 y el valor observado es 28.8127. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre los salarios de hombres y mujeres. Se concluye lo mismo con el valor p, que da un valor de 1.437086 × 10<sup>−179</sup>, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana.</p>
 </div>
 <div id="comprobación-1" class="section level2" number="4.7">
-<h2 number="4.7"><span class="header-section-number">4.7</span> Comprobación</h2>
+<h2><span class="header-section-number">4.7</span> Comprobación</h2>
 <pre class="r"><code>t.test(Hombres$WeeklyWages, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = &quot;greater&quot;)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -592,95 +593,128 @@ result4</code></pre>
 </div>
 </div>
 <div id="salario-semanal-ii" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> Salario semanal (II)</h1>
+<h1><span class="header-section-number">5</span> Salario semanal (II)</h1>
 <hr />
 <div id="hipótesis-nula-y-alternativa-2" class="section level2" number="5.1">
-<h2 number="5.1"><span class="header-section-number">5.1</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">5.1</span> Hipótesis nula y alternativa</h2>
+<p><span class="math inline">\(H_0: µ_H - µ_M = 50\)</span></p>
+<p><span class="math inline">\(H_0: µ_H &gt; µ_M = 50\)</span></p>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="justificación-del-test-a-aplicar-2" class="section level2" number="5.2">
-<h2 number="5.2"><span class="header-section-number">5.2</span> Justificación del test a aplicar</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<h2><span class="header-section-number">5.2</span> Justificación del test a aplicar</h2>
+<p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
+<p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
+<p>Comprobamos igualdad de varianzas:</p>
+<pre class="r"><code>var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)</code></pre>
+<pre><code>## 
+##  F test to compare two variances
+## 
+## data:  Hombres$WeeklyWages and Mujeres$WeeklyWages
+## F = 1.4084, num df = 38903, denom df = 11619, p-value &lt; 2.2e-16
+## alternative hypothesis: true ratio of variances is not equal to 1
+## 95 percent confidence interval:
+##  1.367605 1.450156
+## sample estimates:
+## ratio of variances 
+##           1.408441</code></pre>
+<p>p&lt;0.001, por lo que descartamos igualdad de varianzas.</p>
+<p>Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.</p>
 </div>
 <div id="cálculos-2" class="section level2" number="5.3">
-<h2 number="5.3"><span class="header-section-number">5.3</span> Cálculos</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<h2><span class="header-section-number">5.3</span> Cálculos</h2>
+<pre class="r"><code>result5&lt;-testhipotesis(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
+result5</code></pre>
+<pre><code>##          t tcritical       pvalue
+## 1 7.647497  1.644922 1.066063e-14</code></pre>
 </div>
 <div id="conclusión-2" class="section level2" number="5.4">
-<h2 number="5.4"><span class="header-section-number">5.4</span> Conclusión</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<h2><span class="header-section-number">5.4</span> Conclusión</h2>
+<p>El valor crítico para un nivel de confianza del 95% es 1.644922 y el valor observado es 7.647497. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que la diferencia que hay entre los salarios de hombres y mujeres es mayor de 50. Se concluye lo mismo con el valor p, que da un valor de 1.066063 × 10<sup>−14</sup>, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana.</p>
 </div>
 <div id="comprobación-2" class="section level2" number="5.5">
-<h2 number="5.5"><span class="header-section-number">5.5</span> Comprobación</h2>
-<p>Finalmente, se asignan los nuevos códigos:</p>
+<h2><span class="header-section-number">5.5</span> Comprobación</h2>
+<pre class="r"><code>t.test(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = &quot;greater&quot;)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Hombres$WeeklyWages - 50 and Mujeres$WeeklyWages
+## t = 7.6475, df = 22274, p-value = 1.066e-14
+## alternative hypothesis: true difference in means is greater than 0
+## 95 percent confidence interval:
+##  14.18029      Inf
+## sample estimates:
+## mean of x mean of y 
+##  399.4311  381.3649</code></pre>
+<p>Se obtiene el mismo resultado.</p>
 <hr />
 </div>
 </div>
 <div id="diferencia-de-jornada-según-género" class="section level1" number="6">
-<h1 number="6"><span class="header-section-number">6</span> Diferencia de jornada según género</h1>
+<h1><span class="header-section-number">6</span> Diferencia de jornada según género</h1>
 <hr />
 <div id="análisis-visual-2" class="section level2" number="6.1">
-<h2 number="6.1"><span class="header-section-number">6.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">6.1</span> Análisis visual</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="interpretación-1" class="section level2" number="6.2">
-<h2 number="6.2"><span class="header-section-number">6.2</span> Interpretación</h2>
+<h2><span class="header-section-number">6.2</span> Interpretación</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="hipótesis-y-alternativa" class="section level2" number="6.3">
-<h2 number="6.3"><span class="header-section-number">6.3</span> Hipótesis y alternativa</h2>
+<h2><span class="header-section-number">6.3</span> Hipótesis y alternativa</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="tipo-de-test" class="section level2" number="6.4">
-<h2 number="6.4"><span class="header-section-number">6.4</span> Tipo de test</h2>
+<h2><span class="header-section-number">6.4</span> Tipo de test</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="cálculos-3" class="section level2" number="6.5">
-<h2 number="6.5"><span class="header-section-number">6.5</span> Cálculos</h2>
+<h2><span class="header-section-number">6.5</span> Cálculos</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="conclusión-3" class="section level2" number="6.6">
-<h2 number="6.6"><span class="header-section-number">6.6</span> Conclusión</h2>
+<h2><span class="header-section-number">6.6</span> Conclusión</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="comprobación-3" class="section level2" number="6.7">
-<h2 number="6.7"><span class="header-section-number">6.7</span> Comprobación</h2>
+<h2><span class="header-section-number">6.7</span> Comprobación</h2>
 <hr />
 </div>
 </div>
 <div id="salario-por-hora" class="section level1" number="7">
-<h1 number="7"><span class="header-section-number">7</span> Salario por hora</h1>
+<h1><span class="header-section-number">7</span> Salario por hora</h1>
 <hr />
 <div id="hipótesis-nula-y-alternativa-3" class="section level2" number="7.1">
-<h2 number="7.1"><span class="header-section-number">7.1</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">7.1</span> Hipótesis nula y alternativa</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="tipo-de-test-1" class="section level2" number="7.2">
-<h2 number="7.2"><span class="header-section-number">7.2</span> Tipo de test</h2>
+<h2><span class="header-section-number">7.2</span> Tipo de test</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="cálculos-4" class="section level2" number="7.3">
-<h2 number="7.3"><span class="header-section-number">7.3</span> Cálculos</h2>
+<h2><span class="header-section-number">7.3</span> Cálculos</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="conclusión-4" class="section level2" number="7.4">
-<h2 number="7.4"><span class="header-section-number">7.4</span> Conclusión</h2>
+<h2><span class="header-section-number">7.4</span> Conclusión</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 </div>
 <div id="comprobación-4" class="section level2" number="7.5">
-<h2 number="7.5"><span class="header-section-number">7.5</span> Comprobación</h2>
+<h2><span class="header-section-number">7.5</span> Comprobación</h2>
 <p>Finalmente, se asignan los nuevos códigos:</p>
 <hr />
 </div>
 </div>
 <div id="resumen-ejecutivo" class="section level1" number="8">
-<h1 number="8"><span class="header-section-number">8</span> Resumen ejecutivo</h1>
+<h1><span class="header-section-number">8</span> Resumen ejecutivo</h1>
 <hr />
 <p>finalmente, se asignan los nuevos códigos:</p>
 <hr />
 </div>
 <div id="bibliografía" class="section level1" number="9">
-<h1 number="9"><span class="header-section-number">9</span> Bibliografía</h1>
+<h1><span class="header-section-number">9</span> Bibliografía</h1>
 <hr />
 <ul>
 <li>Apuntes y recursos de la asignatura.</li>

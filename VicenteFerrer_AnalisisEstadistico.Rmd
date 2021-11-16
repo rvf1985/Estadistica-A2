@@ -288,9 +288,9 @@ Se observan pequeñas diferencias entre sueldos, el límite inferior de los suel
 
 ## Hipótesis nula y alternativa
 
-$H_0: H = M$
+$H_0: µ_H = µ_M$
 
-$H_1: H > M $
+$H_1: µ_H > µ_M$
 
 ## Justificación del test a aplicar
 
@@ -309,6 +309,8 @@ p<0.001, por lo que descartamos igualdad de varianzas.
 Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.
 
 ## Cálculos
+
+Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también. El resultado que arroja es:
 
 ```{r warning=FALSE}
 result4<-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
@@ -335,43 +337,47 @@ Se obtiene el mismo resultado.
 
 ## Hipótesis nula y alternativa
 
-```{r}
+$H_0: µ_H - µ_M = 50$
 
-```
+$H_0: µ_H > µ_M = 50$
 
 Finalmente, se asignan los nuevos códigos:
 
 ## Justificación del test a aplicar
 
-```{r}
+Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.
 
+Como no se conoce la varianza de la población aplicamos la distribución t, 
+
+Comprobamos igualdad de varianzas:
+
+```{r}
+var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)
 ```
 
-Finalmente, se asignan los nuevos códigos:
+p<0.001, por lo que descartamos igualdad de varianzas.
+
+Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.
 
 ## Cálculos
 
-```{r}
 
+```{r warning=FALSE}
+result5<-testhipotesis(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
+result5
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Conclusión
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El valor crítico para un nivel de confianza del 95% es 1.644922 y el valor observado es 7.647497. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que la diferencia que hay entre los salarios de hombres y mujeres es mayor de 50. Se concluye lo mismo con el valor p, que da un valor de 1.066063 × 10^−14^, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana.
 
 ## Comprobación
 
 ```{r}
-
+t.test(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = "greater")
 ```
 
-Finalmente, se asignan los nuevos códigos:
+Se obtiene el mismo resultado.
 
 ******
 # Diferencia de jornada según género 

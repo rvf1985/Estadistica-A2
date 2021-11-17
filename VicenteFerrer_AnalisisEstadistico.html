@@ -395,6 +395,7 @@ c(L,U)</code></pre>
 <div id="coste-inicial-y-final-de-los-siniestros" class="section level1" number="3">
 <h1 number="3"><span class="header-section-number">3</span> Coste inicial y final de los siniestros</h1>
 <hr />
+<p>¿Podemos aceptar que no hay diferencias entre IniCost y UltCost?</p>
 <div id="justificación-del-test-a-aplicar" class="section level2" number="3.1">
 <h2 number="3.1"><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
@@ -523,6 +524,9 @@ result3</code></pre>
 <hr />
 <div id="análisis-visual-1" class="section level2" number="4.1">
 <h2 number="4.1"><span class="header-section-number">4.1</span> Análisis visual</h2>
+<ul>
+<li>Diagrama de caja de la distribución de la variable WeeklyWages según el género</li>
+</ul>
 <pre class="r"><code>Mujeres &lt;- claim[claim$Gender==&quot;F&quot;,]
 Hombres &lt;- claim[claim$Gender==&quot;M&quot;,]
 
@@ -535,6 +539,7 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 </div>
 <div id="hipótesis-nula-y-alternativa-1" class="section level2" number="4.3">
 <h2 number="4.3"><span class="header-section-number">4.3</span> Hipótesis nula y alternativa</h2>
+<p>¿Podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana?</p>
 <p><span class="math inline">\(H_0: µ_H = µ_M\)</span></p>
 <p><span class="math inline">\(H_1: µ_H &gt; µ_M\)</span></p>
 </div>
@@ -591,6 +596,7 @@ result4</code></pre>
 <div id="salario-semanal-ii" class="section level1" number="5">
 <h1 number="5"><span class="header-section-number">5</span> Salario semanal (II)</h1>
 <hr />
+<p>¿Podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana?</p>
 <div id="hipótesis-nula-y-alternativa-2" class="section level2" number="5.1">
 <h2 number="5.1"><span class="header-section-number">5.1</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_H - µ_M = 50\)</span></p>
@@ -650,6 +656,9 @@ result5</code></pre>
 <hr />
 <div id="análisis-visual-2" class="section level2" number="6.1">
 <h2 number="6.1"><span class="header-section-number">6.1</span> Análisis visual</h2>
+<ul>
+<li>Diagrama de barras con los porcentajes de cada categoría de la variable ParTimeFullTime según el género</li>
+</ul>
 <pre class="r"><code>claim2 &lt;- claim[!(claim$Gender==&quot;U&quot;),]
 claim2$Gender &lt;- as.factor(claim2$Gender)
 claim2$PartTimeFullTime &lt;- as.factor(claim2$PartTimeFullTime)
@@ -670,6 +679,7 @@ barplot(tab2*100,
 </div>
 <div id="hipótesis-y-alternativa" class="section level2" number="6.3">
 <h2 number="6.3"><span class="header-section-number">6.3</span> Hipótesis y alternativa</h2>
+<p>¿La proporción de personas que trabajan a tiempo completo es diferente para hombres que para mujeres?</p>
 <p><span class="math inline">\(H_0: p_H = p_M\)</span></p>
 <p><span class="math inline">\(H_1: p_H \neq p_M\)</span></p>
 </div>
@@ -720,6 +730,7 @@ prop.test(success, nn, alternative=&quot;two.sided&quot;, correct=FALSE)</code><
 <div id="salario-por-hora" class="section level1" number="7">
 <h1 number="7"><span class="header-section-number">7</span> Salario por hora</h1>
 <hr />
+<p>¿Podemos afirmar que los hombres cobran más que las mujeres por hora trabajada?</p>
 <div id="hipótesis-nula-y-alternativa-3" class="section level2" number="7.1">
 <h2 number="7.1"><span class="header-section-number">7.1</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_H = µ_M\)</span></p>

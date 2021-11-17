@@ -154,6 +154,8 @@ Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos 
 # Coste inicial y final de los siniestros  
 ******
 
+¿Podemos aceptar que no hay diferencias entre IniCost y UltCost?
+
 ## Justificación del test a aplicar
 
 Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.
@@ -270,6 +272,8 @@ Los valores coinciden.
 
 ## Análisis visual
 
+* Diagrama de caja de la distribución de la variable WeeklyWages según el género
+
 ```{r}
 Mujeres <- claim[claim$Gender=="F",]
 Hombres <- claim[claim$Gender=="M",]
@@ -282,6 +286,8 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c("Mujeres","H
 Se observan pequeñas diferencias entre sueldos, el límite inferior de los sueldos es menor en mujeres, pero el superior parece ser superior. Es necesario recurrir a un contraste de hipótesis para confirmar si estas diferencias observadas son significativas.
 
 ## Hipótesis nula y alternativa
+
+¿Podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana?
 
 $H_0: µ_H = µ_M$
 
@@ -327,6 +333,8 @@ Se obtiene el mismo resultado.
 ******
 # Salario semanal (II)  
 ******
+
+¿Podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana?
 
 ## Hipótesis nula y alternativa
 
@@ -375,6 +383,8 @@ Se obtiene el mismo resultado.
 
 ## Análisis visual
 
+* Diagrama de barras con los porcentajes de cada categoría de la variable ParTimeFullTime según el género
+
 ```{r}
 claim2 <- claim[!(claim$Gender=="U"),]
 claim2$Gender <- as.factor(claim2$Gender)
@@ -396,6 +406,8 @@ El número total de hombres que trabaja a tiempo completo es muy superior que n�
 Pero el número de registros masculinos es muy superior al de mujeres, así que lo que habría que estudiar es la proporción de cada grupo.
 
 ## Hipótesis y alternativa
+
+¿La proporción de personas que trabajan a tiempo completo es diferente para hombres que para mujeres?
 
 $H_0: p_H = p_M$
 
@@ -437,6 +449,8 @@ prop.test(success, nn, alternative="two.sided", correct=FALSE)
 ******
 # Salario por hora 
 ******
+
+¿Podemos afirmar que los hombres cobran más que las mujeres por hora trabajada?
 
 ## Hipótesis nula y alternativa
 

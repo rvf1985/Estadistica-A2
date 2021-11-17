@@ -305,7 +305,7 @@ Se trata de un contraste de dos muestras independientes sobre la media con varia
 
 ## Cálculos
 
-Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también. El resultado que arroja es:
+Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también, en lugar de repetir el código. El resultado que arroja es:
 
 ```{r warning=FALSE}
 result4<-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
@@ -487,17 +487,17 @@ Los valores coinciden.
 # Resumen ejecutivo 
 ******
 
-2. Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio del coste (UltCost).
+* Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio de la variable (UltCost) (coste)
 
-3. ¿Venden más las tiendas de USA que las de fuera de USA?Podemos afirmar que las ventas en las tiendas de USA son superiores a las de fuera de USA con unnivel de confianza del 95%.
+* Podemos afirmar que no se puede aceptar que la estimación inicial del coste y el coste total pagado no presentan diferencias, con un nivel de confianza del 95%.
 
-4. ¿Son diferentes las ventas de zonas urbanas en comparación con las ventas de zonas rurales?No se observan diferencias significativas al 95% en las ventas de las tiendas en zonas rurales y urbanas.
+* Al comparar la muestra de hombres con la de mujeres, podemos concluir que los hombres cobran más que las mujeres en promedio a la semana, con un nivel de confianza del 95%.
 
-5. ¿Más de la mitad de las tiendas tienen un precio inferior al de la competencia?Con un nivel de confianza del 95%, se puede afirmar que más de la mitad de las tiendas usan unaestrategia de precios bajos.
+* A continuación, comparando la diferencia de promedio de salario a la semana entre hombres y mujeres, podemos concluir que la diferencia que existe es mayor de 50, con un nivel de confianza del 95%.
 
-6. ¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.
+* Siguiendo con el estudio, se puede afirmar que la proporción de hombres y mujeres que trabajan a jornada completa es diferente, con un nivel de confianza del 95%.
 
-7. ¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.
+* Por último, estudiando las ganancias por hora, se puede afirmar que los hombres no cobran más que las mujeres por hora trabajada, con un nivel de confianza del 95%.
 
 ******
 # Bibliografía

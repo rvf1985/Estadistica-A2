@@ -560,7 +560,7 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 </div>
 <div id="cálculos-1" class="section level2" number="4.5">
 <h2 number="4.5"><span class="header-section-number">4.5</span> Cálculos</h2>
-<p>Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también. El resultado que arroja es:</p>
+<p>Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también, en lugar de repetir el código. El resultado que arroja es:</p>
 <pre class="r"><code>result4&lt;-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
 result4</code></pre>
 <pre><code>##         t tcritical        pvalue
@@ -781,14 +781,14 @@ result7</code></pre>
 <div id="resumen-ejecutivo" class="section level1" number="8">
 <h1 number="8"><span class="header-section-number">8</span> Resumen ejecutivo</h1>
 <hr />
-<ol start="2" style="list-style-type: decimal">
-<li><p>Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio del coste (UltCost).</p></li>
-<li><p>¿Venden más las tiendas de USA que las de fuera de USA?Podemos afirmar que las ventas en las tiendas de USA son superiores a las de fuera de USA con unnivel de confianza del 95%.</p></li>
-<li><p>¿Son diferentes las ventas de zonas urbanas en comparación con las ventas de zonas rurales?No se observan diferencias significativas al 95% en las ventas de las tiendas en zonas rurales y urbanas.</p></li>
-<li><p>¿Más de la mitad de las tiendas tienen un precio inferior al de la competencia?Con un nivel de confianza del 95%, se puede afirmar que más de la mitad de las tiendas usan unaestrategia de precios bajos.</p></li>
-<li><p>¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.</p></li>
-<li><p>¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.</p></li>
-</ol>
+<ul>
+<li><p>Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio de la variable (UltCost) (coste)</p></li>
+<li><p>Podemos afirmar que no se puede aceptar que la estimación inicial del coste y el coste total pagado no presentan diferencias, con un nivel de confianza del 95%.</p></li>
+<li><p>Al comparar la muestra de hombres con la de mujeres, podemos concluir que los hombres cobran más que las mujeres en promedio a la semana, con un nivel de confianza del 95%.</p></li>
+<li><p>A continuación, comparando la diferencia de promedio de salario a la semana entre hombres y mujeres, podemos concluir que la diferencia que existe es mayor de 50, con un nivel de confianza del 95%.</p></li>
+<li><p>Siguiendo con el estudio, se puede afirmar que la proporción de hombres y mujeres que trabajan a jornada completa es diferente, con un nivel de confianza del 95%.</p></li>
+<li><p>Por último, estudiando las ganancias por hora, se puede afirmar que los hombres no cobran más que las mujeres por hora trabajada, con un nivel de confianza del 95%.</p></li>
+</ul>
 <hr />
 </div>
 <div id="bibliografía" class="section level1" number="9">

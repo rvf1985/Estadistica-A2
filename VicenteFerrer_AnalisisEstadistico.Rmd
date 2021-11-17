@@ -131,11 +131,6 @@ Como p-value es mayor de 0.05 se acepta la hipótesis de normalidad.
 
 * Cálculo manual del intervalo de confianza al 95% de la media poblacional de la variable 'UltCost':
 
-Media:
-```{r}
-print(mean(claim$UltCost))
-```
-
 Intervalo de confianza:
 ```{r}
 n <- nrow(claim)
@@ -215,12 +210,12 @@ testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alte
       tcritical <- qt(alpha/2, df, lower.tail=FALSE)
       pvalue <- pt(abs(t), df, lower.tail=FALSE )*2
     }
-    #alternative=="menor"
-    else if (alternative=="menor"){
+    #alternative=="less"
+    else if (alternative=="less"){
       tcritical <- qt(alpha, df, lower.tail=TRUE)
       pvalue <- pt(t, df, lower.tail=TRUE)
     }
-    #alternative=="mayor"
+    #alternative=="greater"
     else{
       tcritical <- qt(alpha, df, lower.tail=FALSE)
       pvalue <- pt(t, df, lower.tail=FALSE)
@@ -236,12 +231,12 @@ testhipotesis <- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alte
       tcritical <- qt(alpha/2, df=nD-1, lower.tail=FALSE)
       pvalue <- pt(abs(t), df=nD-1, lower.tail=FALSE)*2
     }
-    #alternative=="menor"
-    else if (alternative=="menor"){
+    #alternative=="less"
+    else if (alternative=="less"){
       tcritical <- qt(alpha, df=nD-1, lower.tail=TRUE)
       pvalue <- pt(abs(t), df=nD-1, lower.tail=TRUE)
     }
-    #alternative=="mayor"
+    #alternative=="greater"
     else{
       tcritical <- qt(alpha, df=nD-1, lower.tail=FALSE)
       pvalue <- pt(abs(t), df=nD-1, lower.tail=FALSE)
@@ -317,8 +312,6 @@ result4<-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, v
 result4
 ```
 
-Finalmente, se asignan los nuevos códigos:
-
 ## Conclusión
 
 El valor crítico para un nivel de confianza del 95% es 1.644922	 y el valor observado es 28.8127. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre los salarios de hombres y mujeres. Se concluye lo mismo con el valor p, que da un valor de 1.437086 × 10^−179^, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana. 
@@ -339,9 +332,7 @@ Se obtiene el mismo resultado.
 
 $H_0: µ_H - µ_M = 50$
 
-$H_0: µ_H > µ_M = 50$
-
-Finalmente, se asignan los nuevos códigos:
+$H_1: µ_H - µ_M > 50$
 
 ## Justificación del test a aplicar
 
@@ -360,7 +351,6 @@ p<0.001, por lo que descartamos igualdad de varianzas.
 Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.
 
 ## Cálculos
-
 
 ```{r warning=FALSE}
 result5<-testhipotesis(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
@@ -407,40 +397,41 @@ Pero el número de registros masculinos es muy superior al de mujeres, así que 
 
 ## Hipótesis y alternativa
 
-```{r}
+$H_0: p_H = p_M$
 
-```
-
-Finalmente, se asignan los nuevos códigos:
+$H_1: p_H \neq p_M$
 
 ## Tipo de test
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+Se trata de un contraste de dos muestras independientes sobre la proporción. Ya que necesitamos plantear un contraste entre proporciones.
+Usaremos un nivel de confianza del 95% ya que no se especifica otro en el enunciado.
 
 ## Cálculos
 
 ```{r}
-
+alpha = 1-0.95
+n1 <- length(Hombres$PartTimeFullTime)
+n2 <- length(Mujeres$PartTimeFullTime)
+p1 <- sum(Hombres$PartTimeFullTime=='F')/n1
+p2 <- sum(Mujeres$PartTimeFullTime=='F')/n2
+p <- (n1*p1+n2*p2)/(n1+n2)
+z <- (p1-p2)/(sqrt(p*(1-p)*(1/n1+1/n2)))
+zcritical <- qnorm(alpha/2)
+pvalue<- pnorm(abs(z), lower.tail=FALSE)*2
+result6 <- data.frame(z, zcritical, pvalue)
+result6
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Conclusión
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El valor crítico para un nivel de confianza del 95% es 1.959964 y el valor observado es 57.3423. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula. Se concluye lo mismo con el valor p, que da un valor de 1.066063 × 10^−14^, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y y podemos concluir que la proporción de hombres y mujeres que trabajan a jornada completa es diferente.
 
 ## Comprobación
 
 ```{r}
-
+success <- c( p1*n1, p2*n2)
+nn <- c(n1,n2)
+prop.test(success, nn, alternative="two.sided", correct=FALSE)
 ```
 
 ******
@@ -449,49 +440,64 @@ Finalmente, se asignan los nuevos códigos:
 
 ## Hipótesis nula y alternativa
 
-```{r}
+$H_0: µ_H = µ_M$
 
-```
-
-Finalmente, se asignan los nuevos códigos:
+$H_1: µ_H > µ_M$
 
 ## Tipo de test
 
-```{r}
+Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.
 
+Como no se conoce la varianza de la población aplicamos la distribución t, 
+
+Comprobamos igualdad de varianzas:
+
+```{r}
+claim3 <- claim
+claim3$HourlyWages = claim3$WeeklyWages/claim3$HoursWeek
+Mujeres <- claim3[claim3$Gender=="F",]
+Hombres <- claim3[claim3$Gender=="M",]
+var.test(Hombres$HourlyWages, Mujeres$HourlyWages)
 ```
 
-Finalmente, se asignan los nuevos códigos:
+p<0.001, por lo que descartamos igualdad de varianzas.
+
+Por lo tanto, el test a realizar es un contraste de dos muestras independientes sobre la media con varianzas desconocidas.
 
 ## Cálculos
 
-```{r}
-
+```{r message=FALSE, warning=FALSE}
+result7<-testhipotesis(Hombres$HourlyWages, Mujeres$HourlyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
+result7
 ```
-
-Finalmente, se asignan los nuevos códigos:
 
 ## Conclusión
 
-```{r}
-
-```
-
-Finalmente, se asignan los nuevos códigos:
+El valor crítico para un nivel de confianza del 95% es 1.644948	 y el valor observado es 0.7098522. Por lo tanto, nos encontramos en la zona de aceptación de la hipótesis nula y podemos concluir que los hombres no cobran más que las mujeres por hora trabajada. Se concluye lo mismo con el valor p, que da un valor de 0.238903, superior a alpha=0.05.
 
 ## Comprobación
 
 ```{r}
-
+t.test(Hombres$HourlyWages, Mujeres$HourlyWages, paired=FALSE, var.equal=FALSE, alternative = "greater")
 ```
 
-Finalmente, se asignan los nuevos códigos:
+Los valores coinciden.
 
 ******
 # Resumen ejecutivo 
 ******
 
-finalmente, se asignan los nuevos códigos:
+2. Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio del coste (UltCost).
+
+3. ¿Venden más las tiendas de USA que las de fuera de USA?Podemos afirmar que las ventas en las tiendas de USA son superiores a las de fuera de USA con unnivel de confianza del 95%.
+
+4. ¿Son diferentes las ventas de zonas urbanas en comparación con las ventas de zonas rurales?No se observan diferencias significativas al 95% en las ventas de las tiendas en zonas rurales y urbanas.
+
+5. ¿Más de la mitad de las tiendas tienen un precio inferior al de la competencia?Con un nivel de confianza del 95%, se puede afirmar que más de la mitad de las tiendas usan unaestrategia de precios bajos.
+
+6. ¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.
+
+7. ¿Hay una estrategia de precios diferente en las tiendas de USA en relación a las de fuera de USA?No se observan diferencias en la proporción de tiendas que usan estrategia de precios bajos en USAcomparado con fuera de USA con un nivel de confianza del 95%.
 
 ******
 # Bibliografía

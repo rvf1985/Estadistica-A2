@@ -240,7 +240,7 @@ if (!require(&#39;kableExtra&#39;)) install.packages(&#39;kableExtra&#39;); libr
 if (!require(&#39;nortest&#39;)) install.packages(&#39;nortest&#39;); library(&#39;nortest&#39;)</code></pre>
 <hr />
 <div id="lectura-del-fichero-y-preparación-de-los-datos" class="section level1" number="1">
-<h1 number="1"><span class="header-section-number">1</span> Lectura del fichero y preparación de los datos</h1>
+<h1><span class="header-section-number">1</span> Lectura del fichero y preparación de los datos</h1>
 <hr />
 <pre class="r"><code>claim &lt;- read.csv(&quot;./train_clean2.csv&quot;, header=TRUE) </code></pre>
 <pre class="r"><code>str(claim)</code></pre>
@@ -301,10 +301,10 @@ if (!require(&#39;nortest&#39;)) install.packages(&#39;nortest&#39;); library(&#
 <hr />
 </div>
 <div id="coste-de-los-siniestros" class="section level1" number="2">
-<h1 number="2"><span class="header-section-number">2</span> Coste de los siniestros</h1>
+<h1><span class="header-section-number">2</span> Coste de los siniestros</h1>
 <hr />
 <div id="análisis-visual" class="section level2" number="2.1">
-<h2 number="2.1"><span class="header-section-number">2.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">2.1</span> Análisis visual</h2>
 <ul>
 <li>Diagrama de caja de la distribución de la variable ‘UltCost’:</li>
 </ul>
@@ -321,7 +321,7 @@ boxplot(logUltCost, main=&quot;Log UltCost&quot;)</code></pre>
 </ul>
 </div>
 <div id="comprobación-de-normalidad" class="section level2" number="2.2">
-<h2 number="2.2"><span class="header-section-number">2.2</span> Comprobación de normalidad</h2>
+<h2><span class="header-section-number">2.2</span> Comprobación de normalidad</h2>
 <ul>
 <li>Inspección visual de la normalidad de la variable ‘UltCost’:</li>
 </ul>
@@ -368,7 +368,7 @@ lines(x, y, col = &quot;red&quot;)</code></pre>
 <p>Como p-value es mayor de 0.05 se acepta la hipótesis de normalidad.</p>
 </div>
 <div id="intervalo-de-confianza-de-la-media-poblaciona-de-la-variable-ultcost" class="section level2" number="2.3">
-<h2 number="2.3"><span class="header-section-number">2.3</span> Intervalo de confianza de la media poblaciona de la variable ‘UltCost’</h2>
+<h2><span class="header-section-number">2.3</span> Intervalo de confianza de la media poblaciona de la variable ‘UltCost’</h2>
 <ul>
 <li>Cálculo manual del intervalo de confianza al 95% de la media poblacional de la variable ‘UltCost’:</li>
 </ul>
@@ -393,58 +393,22 @@ c(L,U)</code></pre>
 </div>
 </div>
 <div id="coste-inicial-y-final-de-los-siniestros" class="section level1" number="3">
-<h1 number="3"><span class="header-section-number">3</span> Coste inicial y final de los siniestros</h1>
+<h1><span class="header-section-number">3</span> Coste inicial y final de los siniestros</h1>
 <hr />
 <p>¿Podemos aceptar que no hay diferencias entre IniCost y UltCost?</p>
 <div id="justificación-del-test-a-aplicar" class="section level2" number="3.1">
-<h2 number="3.1"><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
+<h2><span class="header-section-number">3.1</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
-<p>Comprobamos igualdad de varianzas:</p>
-<pre class="r"><code>testvar &lt;- function (m1, m2, NConf=0.95) {
-  alpha &lt;- (1-NConf)
-  mean1 &lt;- mean(m1)
-  n1 &lt;- length(m1)
-  sd1 &lt;- sd(m1)
-  mean2 &lt;- mean(m2)
-  n2 &lt;- length(m2)
-  sd2 &lt;- sd(m2)
-
-  f &lt;- sd1^2/sd2^2
-  fcritL &lt;- qf(alpha/2, df1=n1-1, df2=n2-2)
-  fcritU &lt;- qf(1-alpha/2, df1=n1-1, df2=n2-2)
-  pvalue &lt;- min(pf(f, df1=n1-1, df2=n2-2, lower.tail=FALSE), pf(f, df1=n1-1, df2=n2-2))*2
-
-  result &lt;- data.frame(f, fcritL, fcritU, pvalue)
-  result %&gt;% kable() %&gt;% kable_styling()
-  
-  return(result)
-}  
-testvar(claim$IniCost, claim$UltCost, NConf=0.95)</code></pre>
-<pre><code>##           f    fcritL   fcritU       pvalue
-## 1 0.7443563 0.9827118 1.017592 1.48717e-240</code></pre>
-<pre class="r"><code>var.test( claim$IniCost, claim$UltCost )</code></pre>
-<pre><code>## 
-##  F test to compare two variances
-## 
-## data:  claim$IniCost and claim$UltCost
-## F = 0.74436, num df = 50525, denom df = 50525, p-value &lt; 2.2e-16
-## alternative hypothesis: true ratio of variances is not equal to 1
-## 95 percent confidence interval:
-##  0.7314878 0.7574513
-## sample estimates:
-## ratio of variances 
-##          0.7443563</code></pre>
-<p>p&lt;0.001, por lo que descartamos igualdad de varianzas.</p>
 <p>Se trata de un contraste de dos muestras emparejadas sobre la media con varianzas desconocidas y bilateral.Ya que queremos comparar dos muestras que están univocamente relacionadas.</p>
 </div>
 <div id="hipótesis-nula-y-alternativa" class="section level2" number="3.2">
-<h2 number="3.2"><span class="header-section-number">3.2</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">3.2</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_d = 0\)</span></p>
 <p><span class="math inline">\(H_1: µ_d \neq 0\)</span></p>
 </div>
 <div id="cálculos" class="section level2" number="3.3">
-<h2 number="3.3"><span class="header-section-number">3.3</span> Cálculos</h2>
+<h2><span class="header-section-number">3.3</span> Cálculos</h2>
 <pre class="r"><code>testhipotesis &lt;- function (m1, m2, NConf=0.95, paired=TRUE, var.equal=TRUE, alternative=&quot;two.sided&quot;) {
   alpha &lt;- (1-NConf)
   mean1 &lt;- mean(m1)
@@ -457,8 +421,30 @@ testvar(claim$IniCost, claim$UltCost, NConf=0.95)</code></pre>
   nD &lt;- length(diff)
   meanD &lt;- mean(diff)
   sD &lt;- sd(diff)
+  #paired==TRUE
+  if (paired==TRUE){
+    t &lt;- abs(meanD/(sD/sqrt(nD)))
+    #alternative==&quot;two.sided&quot;
+    if (alternative==&quot;two.sided&quot;){
+      tcritical &lt;- qt(alpha/2, df=nD-1, lower.tail=FALSE)
+      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=FALSE)*2
+    }
+    #alternative==&quot;less&quot;
+    else if (alternative==&quot;less&quot;){
+      tcritical &lt;- qt(alpha, df=nD-1, lower.tail=TRUE)
+      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=TRUE)
+    }
+    #alternative==&quot;greater&quot;
+    else{
+      tcritical &lt;- qt(alpha, df=nD-1, lower.tail=FALSE)
+      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=FALSE)
+    }
+    result &lt;- data.frame(t, tcritical, pvalue)
+    result %&gt;% kable() %&gt;% kable_styling()
+  }
+    
   #paired==FALSE
-  if (paired==FALSE){
+  else{
     #var.equal==TRUE
     if (var.equal==TRUE){
       s &lt;- sqrt(((n1-1)*sd1^2+(n2-1)*sd2^2)/(n1+n2-2))
@@ -489,28 +475,6 @@ testvar(claim$IniCost, claim$UltCost, NConf=0.95)</code></pre>
     result &lt;- data.frame(t, tcritical, pvalue)
     result %&gt;% kable() %&gt;% kable_styling()
   }
-  #paired==TRUE
-  else{
-    t &lt;- abs(meanD/(sD/sqrt(nD)))
-    #alternative==&quot;two.sided&quot;
-    if (alternative==&quot;two.sided&quot;){
-      tcritical &lt;- qt(alpha/2, df=nD-1, lower.tail=FALSE)
-      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=FALSE)*2
-    }
-    #alternative==&quot;less&quot;
-    else if (alternative==&quot;less&quot;){
-      tcritical &lt;- qt(alpha, df=nD-1, lower.tail=TRUE)
-      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=TRUE)
-    }
-    #alternative==&quot;greater&quot;
-    else{
-      tcritical &lt;- qt(alpha, df=nD-1, lower.tail=FALSE)
-      pvalue &lt;- pt(abs(t), df=nD-1, lower.tail=FALSE)
-    }
-    result &lt;- data.frame(t, tcritical, pvalue)
-    result %&gt;% kable() %&gt;% kable_styling()
-  
-  }
   return(result)
 }
 
@@ -520,11 +484,11 @@ result3</code></pre>
 ## 1 20.80108  1.960011 1.067535e-95</code></pre>
 </div>
 <div id="conclusión" class="section level2" number="3.4">
-<h2 number="3.4"><span class="header-section-number">3.4</span> Conclusión</h2>
+<h2><span class="header-section-number">3.4</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.960011 y el valor observado es 20.80108. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre IniCost y UltCost. Se concluye lo mismo con el valor p, que da un valor de 1.067535 × 10<sup>−95</sup>, muy inferior a alpha=0.05.</p>
 </div>
 <div id="comprobación" class="section level2" number="3.5">
-<h2 number="3.5"><span class="header-section-number">3.5</span> Comprobación</h2>
+<h2><span class="header-section-number">3.5</span> Comprobación</h2>
 <pre class="r"><code>t.test(claim$UltCost, claim$IniCost, var.equal=FALSE, paired=TRUE, alternative = &quot;two.sided&quot;)</code></pre>
 <pre><code>## 
 ##  Paired t-test
@@ -542,10 +506,10 @@ result3</code></pre>
 </div>
 </div>
 <div id="diferencia-de-salario-según-género" class="section level1" number="4">
-<h1 number="4"><span class="header-section-number">4</span> Diferencia de salario según género</h1>
+<h1><span class="header-section-number">4</span> Diferencia de salario según género</h1>
 <hr />
 <div id="análisis-visual-1" class="section level2" number="4.1">
-<h2 number="4.1"><span class="header-section-number">4.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">4.1</span> Análisis visual</h2>
 <ul>
 <li>Diagrama de caja de la distribución de la variable WeeklyWages según el género</li>
 </ul>
@@ -556,21 +520,40 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 <p><img src="data:image/png;base64,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CdQPLP/K6faRS1877bS5e7spezYe0Hqm15O+/qgp4WpGmxuEtx81HzQB3T6lYz/4SAT0sCwDut2pmzP4awN6un1881dPt6eDl752tjkm4bCMB/SsfVnaalKbgK7Kt/nXcvlRs7u0sd3sAPaD3RPQw7I6e1+fwy/P4K8LaPf1SOtD19POIht8bfnCpqPP/+6s7cCMPwd62j5DuZq/dSwvRj5a7xXr7z6+sB98DAJ6WFbpXIdweQafENCu3jHp6NfWlxncv3JQRgPamfP1pF8d0OP27zYf2g92T0APyyqg63P40+UyuCagneurlwI68rXl5YjOVQoOw/sCun2CcvvPZVpA7Qcfh4AelvXJ+/KPd/eX+//1AR1eRu0unJFLrC+eWDkHZ6dHoPaDnRHQw3K2vaevuQF0uddffwo/vIx6Ori8cNmfPz6p3L9ySK59DnT1vGbmc6D2g10T0MOyuQX0tN7jT1dL6nx7S+AmoGdVJ6B1WIe3Qm//5qWvdc4J37uo2IfxgI5dhb8ioJsJXXfXfrB7AnpYNgGtF9B/rM7gOwFdL6a397sBbb7l1vPtd6+OWzqp7X+tvbPFwjko4wEduw/0ioCud5DzanMfqP1g1wT0sGwCurxuur1P+t76S9WXr1cvJhm+Euno2/qDP59dWjiXvtbcvvJlc9315YP+O9+zX+95KWf3lUjryb4qoNUXf7SvWrIffAQCeli2r+JsfxXS5ZdF/8f9bkBX9/R1rwf0b5sefm3LgccBSX8t/BUB3b4WfvOeCPaDXRPQw7IN6Pn2PXW2b8xzvr7x5N67fkC3X9j8xc7CufS1xfYNKG4/veBgpL8b01VX4df3K23flct+sGsCeljOLr94pH1ryD+fnTTv6HgxDGh91tZ7b8fuwhl+rT5pe9KspfaNITkE174f6Oqz625janrbeT9Q+8GuCeh8+aVysGcCOl/jt0cDH42AzteZ66ewXwI6U6vLs16EB/skoDO1vN7qBhTYKwGdqea2lH/zlriwVwIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQQIKECSgAEECChAkoABBAgoQJKAAQf8fWHBHtKfzy/kAAAAASUVORK5CYII=" width="672" /></p>
 </div>
 <div id="interpretación" class="section level2" number="4.2">
-<h2 number="4.2"><span class="header-section-number">4.2</span> Interpretación</h2>
+<h2><span class="header-section-number">4.2</span> Interpretación</h2>
 <p>Se observan pequeñas diferencias entre sueldos, el límite inferior de los sueldos es menor en mujeres, pero el superior parece ser superior. Es necesario recurrir a un contraste de hipótesis para confirmar si estas diferencias observadas son significativas.</p>
 </div>
 <div id="hipótesis-nula-y-alternativa-1" class="section level2" number="4.3">
-<h2 number="4.3"><span class="header-section-number">4.3</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">4.3</span> Hipótesis nula y alternativa</h2>
 <p>¿Podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana?</p>
 <p><span class="math inline">\(H_0: µ_H = µ_M\)</span></p>
 <p><span class="math inline">\(H_1: µ_H &gt; µ_M\)</span></p>
 </div>
 <div id="justificación-del-test-a-aplicar-1" class="section level2" number="4.4">
-<h2 number="4.4"><span class="header-section-number">4.4</span> Justificación del test a aplicar</h2>
+<h2><span class="header-section-number">4.4</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
-<pre class="r"><code>testvar(Hombres$WeeklyWages, Mujeres$WeeklyWages, NConf=0.95)</code></pre>
+<pre class="r"><code>testvar &lt;- function (m1, m2, NConf=0.95) {
+  alpha &lt;- (1-NConf)
+  mean1 &lt;- mean(m1)
+  n1 &lt;- length(m1)
+  sd1 &lt;- sd(m1)
+  mean2 &lt;- mean(m2)
+  n2 &lt;- length(m2)
+  sd2 &lt;- sd(m2)
+
+  f &lt;- sd1^2/sd2^2
+  fcritL &lt;- qf(alpha/2, df1=n1-1, df2=n2-2)
+  fcritU &lt;- qf(1-alpha/2, df1=n1-1, df2=n2-2)
+  pvalue &lt;- min(pf(f, df1=n1-1, df2=n2-2, lower.tail=FALSE), pf(f, df1=n1-1, df2=n2-2))*2
+
+  result &lt;- data.frame(f, fcritL, fcritU, pvalue)
+  result %&gt;% kable() %&gt;% kable_styling()
+  
+  return(result)
+}  
+testvar(Hombres$WeeklyWages, Mujeres$WeeklyWages, NConf=0.95)</code></pre>
 <pre><code>##          f    fcritL   fcritU        pvalue
 ## 1 1.408441 0.9712333 1.029861 5.030028e-109</code></pre>
 <pre class="r"><code>var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)</code></pre>
@@ -589,7 +572,7 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 <p>Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.</p>
 </div>
 <div id="cálculos-1" class="section level2" number="4.5">
-<h2 number="4.5"><span class="header-section-number">4.5</span> Cálculos</h2>
+<h2><span class="header-section-number">4.5</span> Cálculos</h2>
 <p>Ya se implementó una función en el ejercicio 3 que se puede utilizar en este caso también, en lugar de repetir el código. El resultado que arroja es:</p>
 <pre class="r"><code>result4&lt;-testhipotesis(Hombres$WeeklyWages, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
 result4</code></pre>
@@ -597,11 +580,11 @@ result4</code></pre>
 ## 1 28.8127  1.644922 1.437086e-179</code></pre>
 </div>
 <div id="conclusión-1" class="section level2" number="4.6">
-<h2 number="4.6"><span class="header-section-number">4.6</span> Conclusión</h2>
+<h2><span class="header-section-number">4.6</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.644922 y el valor observado es 28.8127. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que hay diferencias entre los salarios de hombres y mujeres. Se concluye lo mismo con el valor p, que da un valor de 1.437086 × 10<sup>−179</sup>, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran más que las mujeres en promedio a la semana.</p>
 </div>
 <div id="comprobación-1" class="section level2" number="4.7">
-<h2 number="4.7"><span class="header-section-number">4.7</span> Comprobación</h2>
+<h2><span class="header-section-number">4.7</span> Comprobación</h2>
 <pre class="r"><code>t.test(Hombres$WeeklyWages, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = &quot;greater&quot;)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -619,16 +602,16 @@ result4</code></pre>
 </div>
 </div>
 <div id="salario-semanal-ii" class="section level1" number="5">
-<h1 number="5"><span class="header-section-number">5</span> Salario semanal (II)</h1>
+<h1><span class="header-section-number">5</span> Salario semanal (II)</h1>
 <hr />
 <p>¿Podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana?</p>
 <div id="hipótesis-nula-y-alternativa-2" class="section level2" number="5.1">
-<h2 number="5.1"><span class="header-section-number">5.1</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">5.1</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_H - µ_M = 50\)</span></p>
 <p><span class="math inline">\(H_1: µ_H - µ_M &gt; 50\)</span></p>
 </div>
 <div id="justificación-del-test-a-aplicar-2" class="section level2" number="5.2">
-<h2 number="5.2"><span class="header-section-number">5.2</span> Justificación del test a aplicar</h2>
+<h2><span class="header-section-number">5.2</span> Justificación del test a aplicar</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
@@ -651,18 +634,18 @@ result4</code></pre>
 <p>Se trata de un contraste de dos muestras independientes sobre la media con varianzas desconocidas y unilateral por la derecha.</p>
 </div>
 <div id="cálculos-2" class="section level2" number="5.3">
-<h2 number="5.3"><span class="header-section-number">5.3</span> Cálculos</h2>
+<h2><span class="header-section-number">5.3</span> Cálculos</h2>
 <pre class="r"><code>result5&lt;-testhipotesis(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
 result5</code></pre>
 <pre><code>##          t tcritical       pvalue
 ## 1 7.647497  1.644922 1.066063e-14</code></pre>
 </div>
 <div id="conclusión-2" class="section level2" number="5.4">
-<h2 number="5.4"><span class="header-section-number">5.4</span> Conclusión</h2>
+<h2><span class="header-section-number">5.4</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.644922 y el valor observado es 7.647497. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula y podemos concluir que la diferencia que hay entre los salarios de hombres y mujeres es mayor de 50. Se concluye lo mismo con el valor p, que da un valor de 1.066063 × 10<sup>−14</sup>, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y podemos aceptar que los hombres cobran al menos 50 euros más que las mujeres en promedio a la semana.</p>
 </div>
 <div id="comprobación-2" class="section level2" number="5.5">
-<h2 number="5.5"><span class="header-section-number">5.5</span> Comprobación</h2>
+<h2><span class="header-section-number">5.5</span> Comprobación</h2>
 <pre class="r"><code>t.test(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, var.equal=FALSE, paired=FALSE, alternative = &quot;greater&quot;)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -680,10 +663,10 @@ result5</code></pre>
 </div>
 </div>
 <div id="diferencia-de-jornada-según-género" class="section level1" number="6">
-<h1 number="6"><span class="header-section-number">6</span> Diferencia de jornada según género</h1>
+<h1><span class="header-section-number">6</span> Diferencia de jornada según género</h1>
 <hr />
 <div id="análisis-visual-2" class="section level2" number="6.1">
-<h2 number="6.1"><span class="header-section-number">6.1</span> Análisis visual</h2>
+<h2><span class="header-section-number">6.1</span> Análisis visual</h2>
 <ul>
 <li>Diagrama de barras con los porcentajes de cada categoría de la variable ParTimeFullTime según el género</li>
 </ul>
@@ -702,21 +685,21 @@ barplot(tab2*100,
 <p><img src="data:image/png;base64,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" width="672" /></p>
 </div>
 <div id="interpretación-1" class="section level2" number="6.2">
-<h2 number="6.2"><span class="header-section-number">6.2</span> Interpretación</h2>
+<h2><span class="header-section-number">6.2</span> Interpretación</h2>
 <p>El número total de hombres que trabaja a tiempo completo es muy superior que número total de mujeres, y ocurre al revés para el tiempo parcial. Pero el número de registros masculinos es muy superior al de mujeres, así que lo que habría que estudiar es la proporción de cada grupo.</p>
 </div>
 <div id="hipótesis-y-alternativa" class="section level2" number="6.3">
-<h2 number="6.3"><span class="header-section-number">6.3</span> Hipótesis y alternativa</h2>
+<h2><span class="header-section-number">6.3</span> Hipótesis y alternativa</h2>
 <p>¿La proporción de personas que trabajan a tiempo completo es diferente para hombres que para mujeres?</p>
 <p><span class="math inline">\(H_0: p_H = p_M\)</span></p>
 <p><span class="math inline">\(H_1: p_H \neq p_M\)</span></p>
 </div>
 <div id="tipo-de-test" class="section level2" number="6.4">
-<h2 number="6.4"><span class="header-section-number">6.4</span> Tipo de test</h2>
+<h2><span class="header-section-number">6.4</span> Tipo de test</h2>
 <p>Se trata de un contraste de dos muestras independientes sobre la proporción. Ya que necesitamos plantear un contraste entre proporciones. Usaremos un nivel de confianza del 95% ya que no se especifica otro en el enunciado.</p>
 </div>
 <div id="cálculos-3" class="section level2" number="6.5">
-<h2 number="6.5"><span class="header-section-number">6.5</span> Cálculos</h2>
+<h2><span class="header-section-number">6.5</span> Cálculos</h2>
 <pre class="r"><code>alpha = 1-0.95
 n1 &lt;- length(Hombres$PartTimeFullTime)
 n2 &lt;- length(Mujeres$PartTimeFullTime)
@@ -732,11 +715,11 @@ result6</code></pre>
 ## 1 57.3423 -1.959964      0</code></pre>
 </div>
 <div id="conclusión-3" class="section level2" number="6.6">
-<h2 number="6.6"><span class="header-section-number">6.6</span> Conclusión</h2>
+<h2><span class="header-section-number">6.6</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.959964 y el valor observado es 57.3423. Por lo tanto, nos encontramos en la zona de rechazo de la hipótesis nula. Se concluye lo mismo con el valor p, que da un valor de 1.066063 × 10<sup>−14</sup>, muy inferior a alpha=0.05. Así que estamos en la zona a favor de la hipótesis alternativa y y podemos concluir que la proporción de hombres y mujeres que trabajan a jornada completa es diferente.</p>
 </div>
 <div id="comprobación-3" class="section level2" number="6.7">
-<h2 number="6.7"><span class="header-section-number">6.7</span> Comprobación</h2>
+<h2><span class="header-section-number">6.7</span> Comprobación</h2>
 <pre class="r"><code>success &lt;- c( p1*n1, p2*n2)
 nn &lt;- c(n1,n2)
 prop.test(success, nn, alternative=&quot;two.sided&quot;, correct=FALSE)</code></pre>
@@ -756,16 +739,16 @@ prop.test(success, nn, alternative=&quot;two.sided&quot;, correct=FALSE)</code><
 </div>
 </div>
 <div id="salario-por-hora" class="section level1" number="7">
-<h1 number="7"><span class="header-section-number">7</span> Salario por hora</h1>
+<h1><span class="header-section-number">7</span> Salario por hora</h1>
 <hr />
 <p>¿Podemos afirmar que los hombres cobran más que las mujeres por hora trabajada?</p>
 <div id="hipótesis-nula-y-alternativa-3" class="section level2" number="7.1">
-<h2 number="7.1"><span class="header-section-number">7.1</span> Hipótesis nula y alternativa</h2>
+<h2><span class="header-section-number">7.1</span> Hipótesis nula y alternativa</h2>
 <p><span class="math inline">\(H_0: µ_H = µ_M\)</span></p>
 <p><span class="math inline">\(H_1: µ_H &gt; µ_M\)</span></p>
 </div>
 <div id="tipo-de-test-1" class="section level2" number="7.2">
-<h2 number="7.2"><span class="header-section-number">7.2</span> Tipo de test</h2>
+<h2><span class="header-section-number">7.2</span> Tipo de test</h2>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
@@ -792,18 +775,18 @@ testvar(Hombres$HourlyWages, Mujeres$HourlyWages, NConf=0.95)</code></pre>
 <p>Por lo tanto, el test a realizar es un contraste de dos muestras independientes sobre la media con varianzas desconocidas.</p>
 </div>
 <div id="cálculos-4" class="section level2" number="7.3">
-<h2 number="7.3"><span class="header-section-number">7.3</span> Cálculos</h2>
+<h2><span class="header-section-number">7.3</span> Cálculos</h2>
 <pre class="r"><code>result7&lt;-testhipotesis(Hombres$HourlyWages, Mujeres$HourlyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)
 result7</code></pre>
 <pre><code>##           t tcritical   pvalue
 ## 1 0.7098522  1.644948 0.238903</code></pre>
 </div>
 <div id="conclusión-4" class="section level2" number="7.4">
-<h2 number="7.4"><span class="header-section-number">7.4</span> Conclusión</h2>
+<h2><span class="header-section-number">7.4</span> Conclusión</h2>
 <p>El valor crítico para un nivel de confianza del 95% es 1.644948 y el valor observado es 0.7098522. Por lo tanto, nos encontramos en la zona de aceptación de la hipótesis nula y podemos concluir que los hombres no cobran más que las mujeres por hora trabajada. Se concluye lo mismo con el valor p, que da un valor de 0.238903, superior a alpha=0.05.</p>
 </div>
 <div id="comprobación-4" class="section level2" number="7.5">
-<h2 number="7.5"><span class="header-section-number">7.5</span> Comprobación</h2>
+<h2><span class="header-section-number">7.5</span> Comprobación</h2>
 <pre class="r"><code>t.test(Hombres$HourlyWages, Mujeres$HourlyWages, paired=FALSE, var.equal=FALSE, alternative = &quot;greater&quot;)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -821,7 +804,7 @@ result7</code></pre>
 </div>
 </div>
 <div id="resumen-ejecutivo" class="section level1" number="8">
-<h1 number="8"><span class="header-section-number">8</span> Resumen ejecutivo</h1>
+<h1><span class="header-section-number">8</span> Resumen ejecutivo</h1>
 <hr />
 <ul>
 <li><p>Si obtenemos infinitas muestras del conjunto de datos, el 95% de los intervalos de confianza calculados a partir de esas muestras contendrían el valor medio de la variable (UltCost) (coste)</p></li>
@@ -834,7 +817,7 @@ result7</code></pre>
 <hr />
 </div>
 <div id="bibliografía" class="section level1" number="9">
-<h1 number="9"><span class="header-section-number">9</span> Bibliografía</h1>
+<h1><span class="header-section-number">9</span> Bibliografía</h1>
 <hr />
 <ul>
 <li>Apuntes y recursos de la asignatura.</li>

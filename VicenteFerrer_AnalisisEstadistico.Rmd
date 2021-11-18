@@ -165,6 +165,26 @@ Como no se conoce la varianza de la población aplicamos la distribución t,
 Comprobamos igualdad de varianzas:
 
 ```{r}
+testvar <- function (m1, m2, NConf=0.95) {
+  alpha <- (1-NConf)
+  mean1 <- mean(m1)
+  n1 <- length(m1)
+  sd1 <- sd(m1)
+  mean2 <- mean(m2)
+  n2 <- length(m2)
+  sd2 <- sd(m2)
+
+  f <- sd1^2/sd2^2
+  fcritL <- qf(alpha/2, df1=n1-1, df2=n2-2)
+  fcritU <- qf(1-alpha/2, df1=n1-1, df2=n2-2)
+  pvalue <- min(pf(f, df1=n1-1, df2=n2-2, lower.tail=FALSE), pf(f, df1=n1-1, df2=n2-2))*2
+
+  result <- data.frame(f, fcritL, fcritU, pvalue)
+  result %>% kable() %>% kable_styling()
+  
+  return(result)
+}  
+testvar(claim$IniCost, claim$UltCost, NConf=0.95)
 var.test( claim$IniCost, claim$UltCost )
 ```
 
@@ -302,6 +322,7 @@ Como no se conoce la varianza de la población aplicamos la distribución t,
 Comprobamos igualdad de varianzas:
 
 ```{r}
+testvar(Hombres$WeeklyWages, Mujeres$WeeklyWages, NConf=0.95)
 var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)
 ```
 
@@ -351,7 +372,8 @@ Como no se conoce la varianza de la población aplicamos la distribución t,
 Comprobamos igualdad de varianzas:
 
 ```{r}
-var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)
+testvar(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, NConf=0.95)
+var.test(Hombres$WeeklyWages-50, Mujeres$WeeklyWages)
 ```
 
 p<0.001, por lo que descartamos igualdad de varianzas.
@@ -471,6 +493,7 @@ claim3 <- claim
 claim3$HourlyWages = claim3$WeeklyWages/claim3$HoursWeek
 Mujeres <- claim3[claim3$Gender=="F",]
 Hombres <- claim3[claim3$Gender=="M",]
+testvar(Hombres$HourlyWages, Mujeres$HourlyWages, NConf=0.95)
 var.test(Hombres$HourlyWages, Mujeres$HourlyWages)
 ```
 

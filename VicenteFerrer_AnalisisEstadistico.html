@@ -401,6 +401,28 @@ c(L,U)</code></pre>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
+<pre class="r"><code>testvar &lt;- function (m1, m2, NConf=0.95) {
+  alpha &lt;- (1-NConf)
+  mean1 &lt;- mean(m1)
+  n1 &lt;- length(m1)
+  sd1 &lt;- sd(m1)
+  mean2 &lt;- mean(m2)
+  n2 &lt;- length(m2)
+  sd2 &lt;- sd(m2)
+
+  f &lt;- sd1^2/sd2^2
+  fcritL &lt;- qf(alpha/2, df1=n1-1, df2=n2-2)
+  fcritU &lt;- qf(1-alpha/2, df1=n1-1, df2=n2-2)
+  pvalue &lt;- min(pf(f, df1=n1-1, df2=n2-2, lower.tail=FALSE), pf(f, df1=n1-1, df2=n2-2))*2
+
+  result &lt;- data.frame(f, fcritL, fcritU, pvalue)
+  result %&gt;% kable() %&gt;% kable_styling()
+  
+  return(result)
+}  
+testvar(claim$IniCost, claim$UltCost, NConf=0.95)</code></pre>
+<pre><code>##           f    fcritL   fcritU       pvalue
+## 1 0.7443563 0.9827118 1.017592 1.48717e-240</code></pre>
 <pre class="r"><code>var.test( claim$IniCost, claim$UltCost )</code></pre>
 <pre><code>## 
 ##  F test to compare two variances
@@ -548,6 +570,9 @@ boxplot(log(Mujeres$WeeklyWages), log(Hombres$WeeklyWages), names=c(&quot;Mujere
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
+<pre class="r"><code>testvar(Hombres$WeeklyWages, Mujeres$WeeklyWages, NConf=0.95)</code></pre>
+<pre><code>##          f    fcritL   fcritU        pvalue
+## 1 1.408441 0.9712333 1.029861 5.030028e-109</code></pre>
 <pre class="r"><code>var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)</code></pre>
 <pre><code>## 
 ##  F test to compare two variances
@@ -607,11 +632,14 @@ result4</code></pre>
 <p>Por el teorema del límite central, podemos asumir normalidad y se desea realizar un test sobre la media.</p>
 <p>Como no se conoce la varianza de la población aplicamos la distribución t,</p>
 <p>Comprobamos igualdad de varianzas:</p>
-<pre class="r"><code>var.test(Hombres$WeeklyWages, Mujeres$WeeklyWages)</code></pre>
+<pre class="r"><code>testvar(Hombres$WeeklyWages-50, Mujeres$WeeklyWages, NConf=0.95)</code></pre>
+<pre><code>##          f    fcritL   fcritU        pvalue
+## 1 1.408441 0.9712333 1.029861 5.030028e-109</code></pre>
+<pre class="r"><code>var.test(Hombres$WeeklyWages-50, Mujeres$WeeklyWages)</code></pre>
 <pre><code>## 
 ##  F test to compare two variances
 ## 
-## data:  Hombres$WeeklyWages and Mujeres$WeeklyWages
+## data:  Hombres$WeeklyWages - 50 and Mujeres$WeeklyWages
 ## F = 1.4084, num df = 38903, denom df = 11619, p-value &lt; 2.2e-16
 ## alternative hypothesis: true ratio of variances is not equal to 1
 ## 95 percent confidence interval:
@@ -745,7 +773,10 @@ prop.test(success, nn, alternative=&quot;two.sided&quot;, correct=FALSE)</code><
 claim3$HourlyWages = claim3$WeeklyWages/claim3$HoursWeek
 Mujeres &lt;- claim3[claim3$Gender==&quot;F&quot;,]
 Hombres &lt;- claim3[claim3$Gender==&quot;M&quot;,]
-var.test(Hombres$HourlyWages, Mujeres$HourlyWages)</code></pre>
+testvar(Hombres$HourlyWages, Mujeres$HourlyWages, NConf=0.95)</code></pre>
+<pre><code>##           f    fcritL   fcritU        pvalue
+## 1 0.6239975 0.9712333 1.029861 2.924798e-236</code></pre>
+<pre class="r"><code>var.test(Hombres$HourlyWages, Mujeres$HourlyWages)</code></pre>
 <pre><code>## 
 ##  F test to compare two variances
 ## 
